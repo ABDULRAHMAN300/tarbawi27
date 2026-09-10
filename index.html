@@ -1,0 +1,1139 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#7B2FF7">
+<meta name="description" content="تطبيق مهام مبني على التقويم التربوي للعام الدراسي 2026/2027 - التعليم العام، دولة الكويت.">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="مهام التقويم">
+<style>html{color-scheme:light dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<script src="./config.js"></script>
+<script src="./supabase.min.js" defer></script>
+</head>
+<body>
+<title>مهام التقويم التربوي</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --violet:#7B2FF7;
+  --violet-2:#9D4EFF;
+  --rose:#FF4D9D;
+  --bg:#FBF7FF;
+  --surface:#FFFFFF;
+  --surface-2:#F0E8FF;
+  --ink:#2A2138;
+  --ink-soft:#6E6285;
+  --line:#E4D8FA;
+  --line-soft:#F0E9FB;
+  --c-dawam:#7B2FF7;
+  --c-imtihan:#E5184C;
+  --c-nataij:#1668E3;
+  --c-tasjeel:#F2760B;
+  --c-otla:#06A94D;
+  --c-munasaba:#D91BAE;
+  --on-violet:#FFFFFF;
+  --grad:linear-gradient(135deg,#7B2FF7 0%,#B32FE0 55%,#FF4D9D 100%);
+  --shadow:0 1px 2px rgba(90,40,160,.06), 0 8px 24px rgba(90,40,160,.09);
+  --shadow-lift:0 8px 34px rgba(70,20,140,.26);
+  --r:14px;
+  --font-d:"Noto Kufi Arabic",system-ui,sans-serif;
+  --font-b:"Noto Sans Arabic",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --violet:#B98BFF;
+    --violet-2:#CBA5FF;
+    --rose:#FF7DBB;
+    --bg:#150F22;
+    --surface:#1F1733;
+    --surface-2:#2C2049;
+    --ink:#F1EAFF;
+    --ink-soft:#A99BC6;
+    --line:#3D2E60;
+    --line-soft:#2E2350;
+    --c-dawam:#B98BFF;
+    --c-imtihan:#FF6B8E;
+    --c-nataij:#5FA8FF;
+    --c-tasjeel:#FFA24D;
+    --c-otla:#3EDC8A;
+    --c-munasaba:#F07BE8;
+    --on-violet:#180F2B;
+    --grad:linear-gradient(135deg,#B98BFF 0%,#D97BF0 55%,#FF7DBB 100%);
+    --shadow:0 1px 2px rgba(0,0,0,.34), 0 8px 24px rgba(0,0,0,.3);
+    --shadow-lift:0 8px 34px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --violet:#B98BFF;
+  --violet-2:#CBA5FF;
+  --rose:#FF7DBB;
+  --bg:#150F22;
+  --surface:#1F1733;
+  --surface-2:#2C2049;
+  --ink:#F1EAFF;
+  --ink-soft:#A99BC6;
+  --line:#3D2E60;
+  --line-soft:#2E2350;
+  --c-dawam:#B98BFF;
+  --c-imtihan:#FF6B8E;
+  --c-nataij:#5FA8FF;
+  --c-tasjeel:#FFA24D;
+  --c-otla:#3EDC8A;
+  --c-munasaba:#F07BE8;
+  --on-violet:#180F2B;
+  --grad:linear-gradient(135deg,#B98BFF 0%,#D97BF0 55%,#FF7DBB 100%);
+  --shadow:0 1px 2px rgba(0,0,0,.34), 0 8px 24px rgba(0,0,0,.3);
+  --shadow-lift:0 8px 34px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--font-b);font-size:15px;line-height:1.6;
+  -webkit-text-size-adjust:100%;
+}
+h1,h2,h3,h4,.dsp{font-family:var(--font-d);font-weight:600;text-wrap:balance;margin:0}
+button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+
+#shell{max-width:560px;margin:0 auto;padding:0 16px 96px;min-height:100vh}
+
+/* ---------- app bar ---------- */
+.appbar{
+  position:sticky;top:0;z-index:30;background:var(--bg);
+  padding-block:14px 10px;border-bottom:1px solid var(--line-soft);
+  margin-inline:-16px;padding-inline:16px;
+}
+.appbar-row{display:flex;align-items:center;gap:12px}
+.brand{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.brand h1{
+  font-size:15.5px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.brand span{font-size:11.5px;color:var(--ink-soft)}
+.sync{
+  display:inline-flex;align-items:center;gap:6px;flex-shrink:0;
+  font-size:10.5px;color:var(--ink-soft);background:var(--surface-2);
+  border-radius:999px;padding:5px 9px;white-space:nowrap;
+}
+.sync i{width:7px;height:7px;border-radius:50%;background:var(--ink-soft);display:block}
+.sync.ok i{background:var(--c-otla)}
+.sync.local i{background:var(--c-tasjeel)}
+.sync.wait i{background:var(--c-imtihan)}
+.sync{border:0;cursor:pointer}
+.themebtn{
+  flex-shrink:0;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);
+  background:var(--surface);display:grid;place-items:center;font-size:15px;
+}
+
+/* ---------- month nav ---------- */
+.monthnav{display:flex;align-items:center;gap:8px;margin-top:12px}
+.navbtn{
+  width:36px;height:36px;border-radius:11px;border:1px solid var(--line);
+  background:var(--surface);display:grid;place-items:center;color:var(--violet);
+  font-size:16px;line-height:1;transition:background .15s;
+}
+.navbtn:hover:not(:disabled){background:var(--surface-2)}
+.navbtn:disabled{opacity:.32;cursor:default}
+.monthlabel{flex:1;text-align:center;font-family:var(--font-d);font-weight:600;font-size:16px}
+.monthlabel small{display:block;font-size:11px;font-weight:400;color:var(--ink-soft);font-family:var(--font-b)}
+
+.seg{display:flex;background:var(--surface-2);border-radius:11px;padding:3px;gap:3px;margin-top:12px}
+.seg button{
+  flex:1;border:0;background:transparent;border-radius:8px;padding:7px 0;
+  font-size:13px;font-family:var(--font-d);color:var(--ink-soft);transition:.15s;
+}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--violet);box-shadow:var(--shadow)}
+
+/* ---------- calendar grid ---------- */
+.wk{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:14px}
+.wkh{font-size:10.5px;color:var(--ink-soft);text-align:center;font-family:var(--font-d);padding-bottom:2px}
+.wkh.off{color:var(--rose)}
+.cell{
+  position:relative;aspect-ratio:1/1.06;border-radius:10px;border:1px solid transparent;
+  background:var(--surface);display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:3px;padding:2px;min-width:0;
+}
+.cell.blank{background:transparent}
+.cell.off{background:var(--surface-2)}
+.cell .d{font-size:14px;font-weight:500;line-height:1}
+.cell.muted .d{color:var(--ink-soft);opacity:.5}
+.cell.today{border-color:var(--violet);box-shadow:inset 0 0 0 1px var(--violet)}
+.cell.today .d{color:var(--violet);font-weight:700}
+.cell.sel{background:var(--grad);border-color:transparent;box-shadow:0 4px 14px color-mix(in srgb,var(--violet) 42%,transparent)}
+.cell.sel .d{color:var(--on-violet)}
+.cell.holiday .d{color:var(--c-otla)}
+.cell.sel.holiday .d{color:var(--on-violet)}
+.dots{display:flex;gap:2.5px;height:5px;align-items:center}
+.dots i{width:4.5px;height:4.5px;border-radius:50%;display:block}
+.cell.sel .dots i{background:var(--on-violet)!important;opacity:.85}
+.cell .flag{position:absolute;inset-block-start:3px;inset-inline-end:4px;width:5px;height:5px;border-radius:50%;background:var(--rose)}
+
+/* ---------- day panel ---------- */
+.panel{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.panel-head{display:flex;align-items:flex-start;gap:10px;padding:14px 14px 12px;border-bottom:1px solid var(--line-soft)}
+.panel-head .dt{flex:1;min-width:0}
+.panel-head h3{font-size:15px}
+.panel-head .sub{font-size:11.5px;color:var(--ink-soft);margin-top:2px}
+.addbtn{
+  flex-shrink:0;border:0;background:var(--grad);color:var(--on-violet);border-radius:10px;
+  padding:8px 13px;font-size:12.5px;font-family:var(--font-d);font-weight:600;
+  display:inline-flex;align-items:center;gap:5px;
+  box-shadow:0 3px 12px color-mix(in srgb,var(--violet) 38%,transparent);
+}
+.panel-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:14px}
+.grp-t{font-size:11px;font-family:var(--font-d);color:var(--ink-soft);letter-spacing:.04em;margin-bottom:7px}
+
+.ev{display:flex;gap:9px;align-items:flex-start;padding:8px 0}
+.ev+.ev{border-top:1px solid var(--line-soft)}
+.ev .stripe{width:3px;border-radius:2px;align-self:stretch;flex-shrink:0;min-height:20px}
+.ev .txt{flex:1;min-width:0;font-size:13.5px;line-height:1.55}
+.ev .tag{font-size:10.5px;font-family:var(--font-d);color:var(--ink-soft);margin-top:2px;display:block}
+.ev .del{
+  flex-shrink:0;border:0;background:transparent;color:var(--ink-soft);
+  width:26px;height:26px;border-radius:8px;font-size:15px;line-height:1;padding:0;
+}
+.ev .del:hover{background:color-mix(in srgb,var(--c-imtihan) 14%,transparent);color:var(--c-imtihan)}
+
+/* ---------- تأكيد ---------- */
+.confirm{max-width:420px}
+.confirm p{font-size:13.5px;color:var(--ink-soft);line-height:1.7;margin:0 0 4px}
+.confirm .what{
+  font-size:13.5px;color:var(--ink);background:var(--surface-2);border-radius:11px;
+  padding:11px 12px;margin:12px 0 2px;line-height:1.6;
+}
+.btn.del{background:var(--c-imtihan);color:#fff}
+
+.task{display:flex;gap:10px;align-items:flex-start;padding:9px 0}
+.task+.task{border-top:1px solid var(--line-soft)}
+.chk{
+  flex-shrink:0;width:21px;height:21px;border-radius:7px;border:1.8px solid var(--line);
+  background:var(--surface);display:grid;place-items:center;margin-top:1px;
+  font-size:12px;color:transparent;transition:.15s;
+}
+.chk[aria-checked="true"]{background:var(--grad);border-color:transparent;color:var(--on-violet)}
+.task .body{flex:1;min-width:0}
+.task .ttl{font-size:14px;font-weight:500;line-height:1.5;word-wrap:break-word}
+.task.done .ttl{text-decoration:line-through;color:var(--ink-soft)}
+.task .note{font-size:12.5px;color:var(--ink-soft);margin-top:3px;word-wrap:break-word}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;align-items:center}
+.pill{font-size:10.5px;font-family:var(--font-d);padding:2.5px 8px;border-radius:999px;background:var(--surface-2);color:var(--ink-soft);display:inline-flex;align-items:center;gap:4px}
+.pill i{width:6px;height:6px;border-radius:50%;display:block}
+.pill.p-high{background:color-mix(in srgb,var(--c-imtihan) 14%,transparent);color:var(--c-imtihan)}
+.pill.p-mid{background:color-mix(in srgb,var(--c-tasjeel) 16%,transparent);color:var(--c-tasjeel)}
+.pill.late{background:color-mix(in srgb,var(--c-imtihan) 16%,transparent);color:var(--c-imtihan)}
+.iconbtn{border:0;background:transparent;color:var(--ink-soft);padding:4px 6px;border-radius:8px;font-size:13px;line-height:1}
+.iconbtn:hover{background:var(--surface-2);color:var(--ink)}
+.empty{font-size:13px;color:var(--ink-soft);text-align:center;padding:16px 8px;line-height:1.7}
+
+/* ---------- week list ---------- */
+.daycard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:12px 14px;margin-top:10px}
+.daycard.is-today{border-color:var(--violet)}
+.daycard-h{display:flex;align-items:center;gap:9px;margin-bottom:2px}
+.daycard-h .dn{font-family:var(--font-d);font-weight:700;font-size:19px;color:var(--violet);line-height:1}
+.daycard-h .dw{font-size:12.5px;color:var(--ink-soft);flex:1}
+.daycard-h .mini{border:0;background:var(--surface-2);border-radius:9px;padding:5px 10px;font-size:11.5px;font-family:var(--font-d);color:var(--violet)}
+
+/* ---------- filters ---------- */
+.chips{display:flex;gap:6px;overflow-x:auto;padding-block:2px 4px;margin-top:12px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  flex-shrink:0;border:1px solid var(--line);background:var(--surface);border-radius:999px;
+  padding:6px 12px;font-size:12px;font-family:var(--font-d);color:var(--ink-soft);
+  display:inline-flex;align-items:center;gap:6px;
+}
+.chip i{width:7px;height:7px;border-radius:50%;display:block}
+.chip[aria-pressed="true"]{background:var(--grad);border-color:transparent;color:var(--on-violet)}
+
+/* ---------- stats ---------- */
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:13px 14px;box-shadow:var(--shadow)}
+.tile .v{font-family:var(--font-d);font-weight:700;font-size:26px;line-height:1.1;color:var(--violet)}
+.tile .k{font-size:11.5px;color:var(--ink-soft);margin-top:4px}
+.tile.warn .v{color:var(--c-imtihan)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;box-shadow:var(--shadow);margin-top:12px}
+.card h3{font-size:14px;margin-bottom:12px}
+.bar{margin-bottom:11px}
+.bar:last-child{margin-bottom:0}
+.bar .l{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px;gap:8px}
+.bar .l b{font-family:var(--font-d);font-weight:600}
+.track{height:7px;border-radius:4px;background:var(--surface-2);overflow:hidden}
+.fill{height:100%;border-radius:4px;transition:width .4s ease}
+.ring{display:flex;align-items:center;gap:14px}
+.ring svg{flex-shrink:0}
+.ring .rt{font-family:var(--font-d);font-weight:700;font-size:22px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ring .rs{font-size:12px;color:var(--ink-soft);line-height:1.6}
+
+/* ---------- bottom tabs ---------- */
+.tabs{
+  position:fixed;inset-inline:0;bottom:0;z-index:40;
+  background:color-mix(in srgb,var(--surface) 92%,transparent);
+  backdrop-filter:blur(12px);border-top:1px solid var(--line);
+  display:flex;padding:7px 12px calc(7px + env(safe-area-inset-bottom));
+}
+.tabs-in{max-width:560px;margin:0 auto;display:flex;width:100%;gap:4px}
+.tab{
+  flex:1;border:0;background:transparent;border-radius:11px;padding:7px 0 6px;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  font-size:10.5px;font-family:var(--font-d);color:var(--ink-soft);transition:.15s;
+}
+.tab svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.tab[aria-selected="true"]{color:var(--violet);background:var(--surface-2)}
+
+/* ---------- sheet ---------- */
+.scrim{position:fixed;inset:0;z-index:50;background:rgba(30,22,42,.45);backdrop-filter:blur(2px);display:grid;align-items:end;justify-items:center}
+.scrim[hidden]{display:none!important}
+.sheet{
+  width:100%;max-width:560px;background:var(--surface);border-radius:20px 20px 0 0;
+  box-shadow:var(--shadow-lift);padding:8px 16px calc(20px + env(safe-area-inset-bottom));
+  max-height:92vh;overflow-y:auto;animation:up .22s ease;
+}
+@keyframes up{from{transform:translateY(24px);opacity:.4}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.sheet{animation:none}.fill{transition:none}}
+.grab{width:38px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 12px}
+.sheet h2{font-size:16px;margin-bottom:3px;color:var(--violet)}
+.sheet .sh-sub{font-size:12px;color:var(--ink-soft);margin-bottom:14px}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:12px;font-family:var(--font-d);color:var(--ink-soft);margin-bottom:6px}
+.field input,.field textarea{
+  width:100%;border:1px solid var(--line);background:var(--bg);color:var(--ink);
+  border-radius:11px;padding:11px 12px;font-family:var(--font-b);font-size:14.5px;
+}
+.field textarea{resize:vertical;min-height:64px}
+.field input:focus-visible,.field textarea:focus-visible,button:focus-visible,.chk:focus-visible{outline:2px solid var(--violet);outline-offset:2px}
+.opts{display:flex;flex-wrap:wrap;gap:6px}
+.opt{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:7px 13px;font-size:12.5px;font-family:var(--font-d);color:var(--ink-soft);display:inline-flex;align-items:center;gap:6px}
+.opt i{width:8px;height:8px;border-radius:50%;display:block}
+.opt[aria-pressed="true"]{border-color:var(--violet);background:color-mix(in srgb,var(--violet) 10%,transparent);color:var(--violet)}
+.sheet-actions{display:flex;gap:9px;margin-top:18px}
+.btn{flex:1;border:0;border-radius:12px;padding:13px 0;font-family:var(--font-d);font-size:14px;font-weight:600}
+.btn.primary{background:var(--grad);color:var(--on-violet);box-shadow:0 4px 16px color-mix(in srgb,var(--violet) 40%,transparent)}
+.btn.ghost{background:var(--surface-2);color:var(--ink)}
+.btn.danger{background:transparent;color:var(--c-imtihan);flex:0 0 auto;padding-inline:16px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:14px;padding:12px 14px;background:var(--surface-2);border-radius:var(--r)}
+.legend span{font-size:11.5px;color:var(--ink-soft);display:inline-flex;align-items:center;gap:5px}
+.legend i{width:8px;height:8px;border-radius:50%;display:block}
+.hint{font-size:11.5px;color:var(--ink-soft);text-align:center;margin-top:18px;line-height:1.7}
+</style>
+
+<div id="shell">
+  <header class="appbar">
+    <div class="appbar-row">
+      <div class="brand">
+        <h1>مهام التقويم التربوي</h1>
+        <span id="todayline"></span>
+      </div>
+      <button class="sync" id="sync" type="button" aria-label="إعدادات المزامنة"><i></i><span id="synctxt">جارٍ الاتصال</span></button>
+      <button class="themebtn" id="themebtn" type="button" aria-label="تبديل الوضع الليلي">◐</button>
+    </div>
+  </header>
+  <main id="main"></main>
+</div>
+
+<nav class="tabs">
+  <div class="tabs-in">
+    <button class="tab" data-tab="cal" aria-selected="true" type="button">
+      <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>التقويم</button>
+    <button class="tab" data-tab="tasks" aria-selected="false" type="button">
+      <svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>المهام</button>
+    <button class="tab" data-tab="stats" aria-selected="false" type="button">
+      <svg viewBox="0 0 24 24"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>الإحصائيات</button>
+  </div>
+</nav>
+
+<div class="scrim" id="scrim" hidden>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheettitle">
+    <div class="grab"></div>
+    <h2 id="sheettitle">مهمة جديدة</h2>
+    <p class="sh-sub" id="sheetsub"></p>
+    <div class="field">
+      <label for="f-title">عنوان المهمة</label>
+      <input type="text" id="f-title" placeholder="مثال: تجهيز أوراق عمل الوحدة الثانية" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="f-date">التاريخ</label>
+      <input type="date" id="f-date">
+    </div>
+    <div class="field">
+      <label for="f-cat">التصنيف</label>
+      <div class="opts" id="f-cat"></div>
+    </div>
+    <div class="field">
+      <label for="f-prio">الأولوية</label>
+      <div class="opts" id="f-prio"></div>
+    </div>
+    <div class="field">
+      <label for="f-note">ملاحظة (اختياري)</label>
+      <textarea id="f-note" placeholder="تفاصيل، أسماء، أرقام صفحات…"></textarea>
+    </div>
+    <div class="sheet-actions">
+      <button class="btn primary" id="f-save" type="button">حفظ</button>
+      <button class="btn ghost" id="f-cancel" type="button">إلغاء</button>
+      <button class="btn danger" id="f-del" type="button" hidden>حذف</button>
+    </div>
+  </div>
+</div>
+
+<div class="scrim" id="cscrim" hidden>
+  <div class="sheet confirm" role="alertdialog" aria-modal="true" aria-labelledby="ctitle">
+    <div class="grab"></div>
+    <h2 id="ctitle">حذف نهائي</h2>
+    <p id="ctext"></p>
+    <div class="what" id="cwhat"></div>
+    <div class="sheet-actions">
+      <button class="btn del" id="c-ok" type="button">حذف نهائي</button>
+      <button class="btn ghost" id="c-no" type="button">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<div class="scrim" id="ascrim" hidden>
+  <div class="sheet confirm" role="dialog" aria-modal="true" aria-labelledby="atitle">
+    <div class="grab"></div>
+    <h2 id="atitle">المزامنة بين الأجهزة</h2>
+    <div id="auth-in">
+      <p style="font-size:13px;color:var(--ink-soft);line-height:1.7;margin:0 0 12px">
+        سجّل بنفس البريد على كل جهاز لتظهر مهامك في كل مكان. بدون تسجيل، تُحفظ المهام على هذا الجهاز فقط.
+      </p>
+      <div class="field"><label for="a-email">البريد الإلكتروني</label>
+        <input type="text" id="a-email" inputmode="email" autocomplete="username" placeholder="name@example.com"></div>
+      <div class="field"><label for="a-pass">كلمة المرور</label>
+        <input type="password" id="a-pass" autocomplete="current-password" placeholder="٦ أحرف فأكثر"></div>
+      <div class="sheet-actions" style="margin-top:6px">
+        <button class="btn primary" id="a-in" type="button">دخول</button>
+        <button class="btn ghost" id="a-up" type="button">حساب جديد</button>
+      </div>
+    </div>
+    <div id="auth-out" hidden>
+      <p style="font-size:13px;color:var(--ink-soft);line-height:1.7;margin:0 0 6px">مسجَّل الدخول باسم:</p>
+      <div class="what" id="auth-email"></div>
+      <div class="sheet-actions"><button class="btn ghost" id="a-out" type="button">تسجيل الخروج</button></div>
+    </div>
+    <p id="auth-msg" hidden style="font-size:12.5px;color:var(--c-imtihan);margin:12px 0 0;line-height:1.7"></p>
+    <div class="sheet-actions" style="margin-top:10px">
+      <button class="btn ghost" id="a-close" type="button">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<script>
+document.documentElement.dir = "rtl";
+document.documentElement.lang = "ar";
+
+/* ============ بيانات التقويم التربوي 2026/2027 (التعليم العام – دولة الكويت) ============ */
+const CATS = {
+  dawam:   {label:"الدوام",         color:"var(--c-dawam)"},
+  imtihan: {label:"الامتحانات",     color:"var(--c-imtihan)"},
+  nataij:  {label:"النتائج",        color:"var(--c-nataij)"},
+  tasjeel: {label:"التسجيل والنقل", color:"var(--c-tasjeel)"},
+  otla:    {label:"العطل",          color:"var(--c-otla)"},
+  munasaba:{label:"المناسبات",      color:"var(--c-munasaba)"}
+};
+
+const EVENTS = [
+  ["2026-09-06","بدء دوام جميع العاملين","dawam"],
+  ["2026-09-06","بدء نقل المتعلمين بين المدارس الحكومية والمدارس الخاصة العربية (الفصل الأول)","tasjeel"],
+  ["2026-09-13","بدء دوام الصف الأول ابتدائي","dawam"],
+  ["2026-09-14","بدء دوام باقي الطلبة","dawam"],
+  ["2026-09-16","بدء دوام رياض الأطفال","dawam"],
+  ["2026-09-20","بدء تسجيل المنازل للثانوي","tasjeel"],
+  ["2026-10-04","بدء تسجيل طلبات النقل للوظائف الإدارية","tasjeel"],
+  ["2026-10-11","تسجيل طلبات الترشيح للوظائف الإشرافية التعليمية","tasjeel"],
+  ["2026-10-29","نقل المتعلمين بين المدارس الحكومية والخاصة (العربية)","tasjeel"],
+  ["2026-11-05","نهاية تسجيل طلبات النقل للوظائف الإدارية","tasjeel"],
+  ["2026-12-09","إعلان نتائج الثاني عشر","nataij"],
+  ["2026-12-20","بدء امتحان الصف الرابع والخامس الابتدائي والمتوسط والعاشر والحادي عشر ثانوي","imtihan"],
+  ["2026-12-24","نهاية دوام أطفال الرياض","dawam"],
+  ["2026-12-28","نهاية امتحان الصف الرابع والخامس ابتدائي والمتوسط","imtihan"],
+  ["2026-12-31","نهاية امتحان العاشر والحادي عشر ثانوي","imtihan"],
+  ["2027-01-03","بدل الجمعة – عطلة رأس السنة الميلادية","otla"],
+  ["2027-01-04","بدء تسجيل مستجدي الرياض","tasjeel"],
+  ["2027-01-06","الإسراء والمعراج","otla"],
+  ["2027-01-07","بين عطلتين","otla"],
+  ["2027-01-10","بدء التقييم النهائي للمتغيبين بعذر مقبول بالابتدائي (١-٢-٣)","imtihan"],
+  ["2027-01-10","بدء امتحان الثاني عشر","imtihan"],
+  ["2027-01-18","نهاية التقييم النهائي للمتغيبين بعذر مقبول بالابتدائي (١-٢-٣)","imtihan"],
+  ["2027-01-21","نهاية امتحان الثاني عشر","imtihan"],
+  ["2027-01-24","بدء إجازة منتصف العام","otla"],
+  ["2027-01-31","نهاية تسجيل المنازل للثانوي","tasjeel"],
+  ["2027-02-04","نهاية إجازة منتصف العام","otla"],
+  ["2027-02-07","بدء تسجيل طلبات نقل الموجهين والهيئة التعليمية","tasjeel"],
+  ["2027-02-07","بدء نقل المتعلمين بين المدارس الحكومية والخاصة (العربية)","tasjeel"],
+  ["2027-02-08","غرة رمضان","munasaba"],
+  ["2027-02-24","نهاية نقل المتعلمين بين المدارس الحكومية والخاصة (العربية)","tasjeel"],
+  ["2027-02-25","اليوم الوطني","otla"],
+  ["2027-02-28","بدل يوم التحرير","otla"],
+  ["2027-03-01","إجازة خاصة آخر شهر رمضان","otla"],
+  ["2027-03-02","إجازة خاصة آخر شهر رمضان","otla"],
+  ["2027-03-03","إجازة خاصة آخر شهر رمضان","otla"],
+  ["2027-03-04","إجازة خاصة آخر شهر رمضان","otla"],
+  ["2027-03-07","إجازة خاصة آخر شهر رمضان","otla"],
+  ["2027-03-08","إجازة خاصة آخر شهر رمضان","otla"],
+  ["2027-03-09","عيد الفطر السعيد","otla"],
+  ["2027-03-10","عيد الفطر السعيد","otla"],
+  ["2027-03-11","عيد الفطر السعيد","otla"],
+  ["2027-03-24","نهاية نقل المتعلمين بين المدارس الحكومية والخاصة (العربية)","tasjeel"],
+  ["2027-04-01","بدء تسجيل مستجدي الابتدائي","tasjeel"],
+  ["2027-04-01","نهاية تسجيل طلبات نقل الموجهين والهيئة التعليمية","tasjeel"],
+  ["2027-04-04","بدء تسجيل طلبات النقل للوظائف الإدارية","tasjeel"],
+  ["2027-04-22","بداية تحويل ملفات الرياض","tasjeel"],
+  ["2027-05-06","نهاية تسجيل طلبات النقل للوظائف الإدارية","tasjeel"],
+  ["2027-05-16","الوقوف بعرفة","otla"],
+  ["2027-05-17","عيد الأضحى المبارك","otla"],
+  ["2027-05-18","عيد الأضحى المبارك","otla"],
+  ["2027-05-19","عيد الأضحى المبارك","otla"],
+  ["2027-05-20","بين عطلتين","otla"],
+  ["2027-05-23","بدء التقييم النهائي للمتغيبين بعذر مقبول بالابتدائي (١-٢-٣) وامتحان الرابع والخامس ابتدائي والمتوسط والعاشر والحادي عشر","imtihan"],
+  ["2027-05-27","نهاية دوام أطفال الرياض","dawam"],
+  ["2027-05-31","نهاية تسجيل مستجدي الرياض","tasjeel"],
+  ["2027-05-31","نهاية التقييم النهائي للمتغيبين بعذر مقبول بالابتدائي (١-٢-٣) وامتحان الرابع والخامس ابتدائي والمتوسط والعاشر والحادي عشر","imtihan"],
+  ["2027-06-02","استخراج نتائج الابتدائي والمتوسط","nataij"],
+  ["2027-06-03","تسليم بطاقات درجات الابتدائي والمتوسط","nataij"],
+  ["2027-06-03","نهاية امتحان العاشر والحادي عشر","imtihan"],
+  ["2027-06-06","رأس السنة الهجرية","otla"],
+  ["2027-06-07","بداية النقل المرحلي لملفات المتعلمين","tasjeel"],
+  ["2027-06-07","إعلان نتائج العاشر والحادي عشر","nataij"],
+  ["2027-06-08","تسليم بطاقات درجات العاشر والحادي عشر","nataij"],
+  ["2027-06-09","بدء امتحان الثاني عشر","imtihan"],
+  ["2027-06-10","نهاية النقل المرحلي لملفات المتعلمين","tasjeel"],
+  ["2027-06-17","بدء تقييم تحديد المستوى للابتدائي (١-٢-٣)","imtihan"],
+  ["2027-06-20","بدء العطلة الصيفية للعاملين بالرياض","otla"],
+  ["2027-06-20","بدء امتحان الدور الثاني للرابع والخامس ابتدائي والمتوسط والعاشر والحادي عشر","imtihan"],
+  ["2027-06-21","نهاية امتحان الثاني عشر","imtihan"],
+  ["2027-06-23","إعلان نتائج الثاني عشر","nataij"],
+  ["2027-06-24","تسليم بطاقات درجات الثاني عشر","nataij"],
+  ["2027-06-24","نهاية تقييم تحديد المستوى للابتدائي (١-٢-٣)","imtihan"],
+  ["2027-06-27","نهاية امتحان الدور الثاني للرابع والخامس ابتدائي والمتوسط والعاشر والحادي عشر","imtihan"],
+  ["2027-06-27","توزيع بطاقات الدور الثاني للابتدائي","nataij"],
+  ["2027-06-29","تسليم بطاقات درجات الدور الثاني متوسط","nataij"],
+  ["2027-07-04","بدء العطلة الصيفية للعاملين بباقي المراحل عدا المكلفين","otla"],
+  ["2027-07-06","بدء امتحان الدور الثاني ثانوي","imtihan"],
+  ["2027-07-06","بدء العطلة الصيفية للموجهين الفنيين","otla"],
+  ["2027-07-15","نهاية امتحان الدور الثاني ثانوي","imtihan"],
+  ["2027-07-19","تسليم بطاقات الدور الثاني ثانوي","nataij"],
+  ["2027-07-20","بدء العطلة الصيفية للمكلفين","otla"]
+];
+
+/* معرّف ثابت لكل حدث رسمي، يُستخدم للحذف النهائي */
+EVENTS.forEach((e,i)=>e.push("e"+i));
+
+/* الأسبوع الدراسي: تاريخ أحد كل أسبوع → رقم الأسبوع */
+const WEEKS = {
+  "2026-09-13":["الأول",1],"2026-09-20":["الأول",2],"2026-09-27":["الأول",3],
+  "2026-10-04":["الأول",4],"2026-10-11":["الأول",5],"2026-10-18":["الأول",6],"2026-10-25":["الأول",7],
+  "2026-11-01":["الأول",8],"2026-11-08":["الأول",9],"2026-11-15":["الأول",10],"2026-11-22":["الأول",11],"2026-11-29":["الأول",12],
+  "2026-12-06":["الأول",13],"2026-12-13":["الأول",14],"2026-12-20":["الأول",15],"2026-12-27":["الأول",16],
+  "2027-02-07":["الثاني",1],"2027-02-14":["الثاني",2],"2027-02-21":["الثاني",3],
+  "2027-03-14":["الثاني",4],"2027-03-21":["الثاني",5],"2027-03-28":["الثاني",6],
+  "2027-04-04":["الثاني",7],"2027-04-11":["الثاني",8],"2027-04-18":["الثاني",9],"2027-04-25":["الثاني",10],
+  "2027-05-02":["الثاني",11],"2027-05-09":["الثاني",12],"2027-05-23":["الثاني",13],"2027-05-30":["الثاني",14],
+  "2027-06-06":["الثاني",15],"2027-06-13":["الثاني",16],"2027-06-20":["الثاني",17],"2027-06-27":["الثاني",18]
+};
+
+const TASK_CATS = {
+  tahdeer:{label:"تحضير",   color:"var(--c-dawam)"},
+  taqweem:{label:"تقييم",   color:"var(--c-imtihan)"},
+  idari:  {label:"إداري",   color:"var(--c-tasjeel)"},
+  ijtimaa:{label:"اجتماع",  color:"var(--c-nataij)"},
+  shakhsi:{label:"شخصي",    color:"var(--c-otla)"}
+};
+const PRIOS = ["عالية","متوسطة","منخفضة"];
+const PRIO_CLS = {"عالية":"p-high","متوسطة":"p-mid","منخفضة":"p-low"};
+
+const MONTHS = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+const DAYS   = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+const DAYS_S = ["أحد","اثنين","ثلاثاء","أربعاء","خميس","جمعة","سبت"];
+
+const MIN_M = 2026*12+8;   // سبتمبر 2026
+const MAX_M = 2027*12+7;   // أغسطس 2027
+
+/* ============ أدوات التاريخ ============ */
+const pad = n => String(n).padStart(2,"0");
+const key = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const parse = s => { const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); };
+const addDays = (d,n) => { const x=new Date(d); x.setDate(x.getDate()+n); return x; };
+const TODAY = key(new Date());
+
+/* الأحداث المحذوفة نهائيًا (معرّفاتها) */
+let killed = new Set();
+const liveEvents = () => EVENTS.filter(e=>!killed.has(e[3]));
+
+let evByDate = {}, HOLIDAY_DATES = new Set();
+function rebuildEvents(){
+  evByDate = {};
+  liveEvents().forEach(([d,t,c,id])=>{ (evByDate[d] ||= []).push({t,c,id}); });
+  HOLIDAY_DATES = new Set(liveEvents().filter(e=>e[2]==="otla"&&!/بدء تسجيل|نهاية تسجيل/.test(e[1])).map(e=>e[0]));
+}
+rebuildEvents();
+
+function weekInfo(dateStr){
+  const d = parse(dateStr);
+  const sun = addDays(d, -d.getDay());
+  return WEEKS[key(sun)] || null;
+}
+function longDate(s){
+  const d = parse(s);
+  return DAYS[d.getDay()] + " " + d.getDate() + " " + MONTHS[d.getMonth()] + " " + d.getFullYear();
+}
+
+/* ============ الحالة ============ */
+const state = {
+  tab:"cal", mode:"month",
+  cur:{y:2026,m:8},
+  sel:(TODAY>="2026-09-01"&&TODAY<="2027-08-31")?TODAY:"2026-09-06",
+  filter:"all", catFilter:"all",
+  editing:null
+};
+if(TODAY>="2026-09-01"&&TODAY<="2027-08-31"){
+  const t=parse(TODAY); state.cur={y:t.getFullYear(),m:t.getMonth()};
+}
+
+/* ============ التخزين والمزامنة (Supabase) ============ */
+let tasks=[], SB=null, USER=null, outbox=[];
+const LS="tarbawi_tasks_v1", LSK="tarbawi_killed_v1", LSQ="tarbawi_outbox_v1";
+
+function setSync(cls,txt){
+  const el=document.getElementById("sync");
+  el.className="sync "+cls;
+  document.getElementById("synctxt").textContent=txt;
+}
+function loadLocal(){
+  try{ tasks = JSON.parse(localStorage.getItem(LS)||"[]"); }catch(e){ tasks=[]; }
+  try{ killed = new Set(JSON.parse(localStorage.getItem(LSK)||"[]")); }catch(e){ killed=new Set(); }
+  try{ outbox = JSON.parse(localStorage.getItem(LSQ)||"[]"); }catch(e){ outbox=[]; }
+  rebuildEvents();
+}
+function saveLocal(){ try{ localStorage.setItem(LS, JSON.stringify(tasks)); }catch(e){} }
+function saveKilledLocal(){ try{ localStorage.setItem(LSK, JSON.stringify([...killed])); }catch(e){} }
+function saveOutbox(){ try{ localStorage.setItem(LSQ, JSON.stringify(outbox)); }catch(e){} }
+function queue(op){ outbox.push(op); saveOutbox(); }
+
+function stateLabel(){
+  if(!SB) return ["local","على الجهاز"];
+  if(!USER) return ["local","سجّل الدخول للمزامنة"];
+  if(outbox.length) return ["wait","بانتظار الاتصال"];
+  return ["ok","متزامن"];
+}
+function paintSync(){ const [c,t]=stateLabel(); setSync(c,t); }
+
+async function flush(){
+  if(!SB||!USER) return false;
+  while(outbox.length){
+    const op = outbox[0];
+    try{
+      let r;
+      if(op.k==="put"){
+        const t=op.t;
+        r = await SB.from("tasks").upsert({id:t.id,user_id:USER.id,date:t.date,title:t.title,
+              note:t.note||"",cat:t.cat,prio:t.prio,done:!!t.done,ts:t.ts});
+      }else if(op.k==="del"){
+        r = await SB.from("tasks").delete().eq("id",op.id).eq("user_id",USER.id);
+      }else{
+        r = await SB.from("removed_events").upsert({user_id:USER.id, ids:op.ids});
+      }
+      if(r.error) throw r.error;
+      outbox.shift(); saveOutbox();
+    }catch(e){ paintSync(); return false; }
+  }
+  return true;
+}
+async function pull(){
+  if(!SB||!USER) return;
+  try{
+    const r1 = await SB.from("tasks").select("*").eq("user_id",USER.id);
+    if(r1.error) throw r1.error;
+    tasks = (r1.data||[]).map(r=>({id:r.id,date:r.date,title:r.title,note:r.note||"",
+      cat:r.cat,prio:r.prio,done:!!r.done,ts:Number(r.ts)||0}));
+    saveLocal();
+    const r2 = await SB.from("removed_events").select("ids").eq("user_id",USER.id).maybeSingle();
+    if(!r2.error){ killed = new Set((r2.data&&r2.data.ids)||[]); saveKilledLocal(); rebuildEvents(); }
+    paintSync(); render();
+  }catch(e){ paintSync(); }
+}
+let syncing=false;
+async function sync(){
+  if(syncing||!SB||!USER) return;
+  syncing=true;
+  try{ if(await flush()) await pull(); }finally{ syncing=false; }
+}
+
+async function putTask(t){
+  const i = tasks.findIndex(x=>x.id===t.id);
+  if(i>=0) tasks[i]=t; else tasks.push(t);
+  saveLocal(); render();
+  queue({k:"put",t:Object.assign({},t)}); paintSync(); sync();
+}
+async function delTask(id){
+  tasks = tasks.filter(x=>x.id!==id);
+  saveLocal(); render();
+  queue({k:"del",id}); paintSync(); sync();
+}
+async function pushKilled(){
+  rebuildEvents(); saveKilledLocal(); render();
+  outbox = outbox.filter(o=>o.k!=="killed");
+  queue({k:"killed",ids:[...killed]}); paintSync(); sync();
+}
+
+/* ---------- الحساب ---------- */
+const ascrim = document.getElementById("ascrim");
+function paintAuth(){
+  const inBox = document.getElementById("auth-in"), outBox = document.getElementById("auth-out");
+  if(USER){ inBox.hidden=true; outBox.hidden=false; document.getElementById("auth-email").textContent=USER.email||""; }
+  else { inBox.hidden=false; outBox.hidden=true; }
+  paintSync();
+}
+function openAuth(){
+  if(!SB){
+    document.getElementById("auth-msg").textContent="لم تُضبط بيانات Supabase في ملف config.js — التطبيق يعمل الآن بالحفظ المحلي فقط.";
+    document.getElementById("auth-msg").hidden=false;
+  }
+  ascrim.hidden=false;
+}
+function closeAuth(){ ascrim.hidden=true; }
+document.getElementById("sync").onclick = openAuth;
+document.getElementById("a-close").onclick = closeAuth;
+ascrim.onclick = e=>{ if(e.target===ascrim) closeAuth(); };
+
+async function doAuth(mode){
+  const msg = document.getElementById("auth-msg");
+  const email = document.getElementById("a-email").value.trim();
+  const pass  = document.getElementById("a-pass").value;
+  msg.hidden=false;
+  if(!SB){ msg.textContent="لم تُضبط بيانات Supabase في ملف config.js."; return; }
+  if(!email||pass.length<6){ msg.textContent="أدخل بريدًا صحيحًا وكلمة مرور من ٦ أحرف فأكثر."; return; }
+  msg.textContent="جارٍ التنفيذ…";
+  try{
+    const r = mode==="up" ? await SB.auth.signUp({email,password:pass})
+                          : await SB.auth.signInWithPassword({email,password:pass});
+    if(r.error) throw r.error;
+    if(mode==="up" && r.data && r.data.user && !r.data.session){
+      msg.textContent="أُنشئ الحساب. افتح بريدك وأكّد التسجيل ثم اضغط «دخول»."; return;
+    }
+    msg.textContent="تم."; closeAuth();
+  }catch(e){ msg.textContent="تعذّر: "+(e.message||"خطأ غير معروف"); }
+}
+document.getElementById("a-in").onclick  = ()=>doAuth("in");
+document.getElementById("a-up").onclick  = ()=>doAuth("up");
+document.getElementById("a-out").onclick = async ()=>{ try{ await SB.auth.signOut(); }catch(e){} closeAuth(); };
+
+async function initStore(){
+  loadLocal(); render(); paintSync();
+  const cfg = window.TARBAWI_CONFIG||{};
+  if(!cfg.url || !cfg.anonKey || !window.supabase){ paintAuth(); return; }
+  try{
+    SB = window.supabase.createClient(cfg.url, cfg.anonKey, {auth:{persistSession:true,autoRefreshToken:true}});
+    const {data} = await SB.auth.getSession();
+    USER = (data && data.session) ? data.session.user : null;
+    SB.auth.onAuthStateChange((_e,s)=>{ USER = s? s.user : null; paintAuth(); if(USER) sync(); });
+  }catch(e){ SB=null; }
+  paintAuth();
+  if(USER) sync();
+  window.addEventListener("online", sync);
+  document.addEventListener("visibilitychange", ()=>{ if(!document.hidden) sync(); });
+  setInterval(()=>{ if(!document.hidden) sync(); }, 60000);
+}
+
+const tasksOn = d => tasks.filter(t=>t.date===d).sort((a,b)=>(a.done-b.done)||(PRIOS.indexOf(a.prio)-PRIOS.indexOf(b.prio))||((a.ts||0)-(b.ts||0)));
+
+/* ============ الرسم ============ */
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const main = document.getElementById("main");
+
+function render(){
+  document.getElementById("todayline").textContent = "اليوم: " + longDate(TODAY);
+  document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected", b.dataset.tab===state.tab));
+  if(state.tab==="cal") renderCal();
+  else if(state.tab==="tasks") renderTasks();
+  else renderStats();
+}
+
+function monthNav(){
+  const idx = state.cur.y*12+state.cur.m;
+  const w = WEEKS[Object.keys(WEEKS).find(k=>{const d=parse(k);return d.getFullYear()===state.cur.y&&d.getMonth()===state.cur.m;})||""];
+  return `<div class="monthnav">
+    <button class="navbtn" id="prevm" type="button" ${idx<=MIN_M?"disabled":""} aria-label="الشهر السابق">›</button>
+    <div class="monthlabel">${MONTHS[state.cur.m]} <span class="num">${state.cur.y}</span>${w?`<small>الفصل الدراسي ${w[0]}</small>`:"<small>خارج أشهر الدوام</small>"}</div>
+    <button class="navbtn" id="nextm" type="button" ${idx>=MAX_M?"disabled":""} aria-label="الشهر التالي">‹</button>
+  </div>
+  <div class="seg" role="group">
+    <button type="button" data-mode="month" aria-pressed="${state.mode==="month"}">عرض شهري</button>
+    <button type="button" data-mode="week" aria-pressed="${state.mode==="week"}">عرض أسبوعي</button>
+  </div>`;
+}
+
+function dotColors(ds){
+  const cs=[];
+  (evByDate[ds]||[]).forEach(e=>{ const c=CATS[e.c].color; if(!cs.includes(c)) cs.push(c); });
+  if(tasksOn(ds).some(t=>!t.done)) cs.unshift("var(--rose)");
+  return cs.slice(0,4);
+}
+
+function renderCal(){
+  let html = monthNav();
+  if(state.mode==="month"){
+    html += `<div class="wk" role="grid">`;
+    DAYS_S.forEach((d,i)=> html += `<div class="wkh${(i===5||i===6)?" off":""}">${d}</div>`);
+    const first = new Date(state.cur.y, state.cur.m, 1);
+    const lead = first.getDay();
+    const dim = new Date(state.cur.y, state.cur.m+1, 0).getDate();
+    for(let i=0;i<lead;i++) html += `<div class="cell blank"></div>`;
+    for(let d=1;d<=dim;d++){
+      const ds = state.cur.y+"-"+pad(state.cur.m+1)+"-"+pad(d);
+      const dow = new Date(state.cur.y,state.cur.m,d).getDay();
+      const cls = ["cell"];
+      if(dow===5||dow===6) cls.push("off");
+      if(HOLIDAY_DATES.has(ds)) cls.push("holiday");
+      if(ds===TODAY) cls.push("today");
+      if(ds===state.sel) cls.push("sel");
+      const dots = dotColors(ds);
+      html += `<button type="button" class="${cls.join(" ")}" data-date="${ds}" aria-label="${longDate(ds)}">
+        <span class="d num">${d}</span>
+        <span class="dots">${dots.map(c=>`<i style="background:${c}"></i>`).join("")}</span>
+      </button>`;
+    }
+    html += `</div>`;
+    html += dayPanel(state.sel);
+    html += legend();
+  }else{
+    const sel = parse(state.sel);
+    const sun = addDays(sel, -sel.getDay());
+    const wi = weekInfo(state.sel);
+    html += `<p class="hint" style="margin-top:14px">${wi?`الأسبوع الدراسي <b class="num">${wi[1]}</b> من الفصل ${wi[0]}`:"أسبوع خارج أيام الدوام الرسمي"}</p>`;
+    for(let i=0;i<7;i++){
+      const d = addDays(sun,i), ds = key(d);
+      const evs = evByDate[ds]||[], tks = tasksOn(ds);
+      html += `<div class="daycard${ds===TODAY?" is-today":""}">
+        <div class="daycard-h">
+          <span class="dn num">${d.getDate()}</span>
+          <span class="dw">${DAYS[d.getDay()]} · ${MONTHS[d.getMonth()]}</span>
+          <button class="mini" type="button" data-add="${ds}">+ مهمة</button>
+        </div>
+        ${evs.length?`<div style="margin-top:6px">${evs.map(e=>evRow(e,{del:true})).join("")}</div>`:""}
+        ${tks.length?`<div style="margin-top:4px">${tks.map(t=>taskRow(t)).join("")}</div>`:""}
+        ${(!evs.length&&!tks.length)?`<p style="font-size:12.5px;color:var(--ink-soft);margin:4px 0 0">لا يوجد شيء مسجَّل.</p>`:""}
+      </div>`;
+    }
+    html += legend();
+  }
+  main.innerHTML = html;
+  wireCal();
+}
+
+function evRow(e, opts){
+  const del = (opts&&opts.del&&e.id) ? `<button class="del" type="button" data-kill="${e.id}" aria-label="حذف الحدث نهائيًا">×</button>` : "";
+  return `<div class="ev"><span class="stripe" style="background:${CATS[e.c].color}"></span>
+    <span class="txt">${esc(e.t)}<span class="tag">${CATS[e.c].label}</span></span>${del}</div>`;
+}
+function taskRow(t){
+  const late = !t.done && t.date < TODAY;
+  const tc = TASK_CATS[t.cat] ? TASK_CATS[t.cat].color : "var(--ink-soft)";
+  return `<div class="task${t.done?" done":""}">
+    <button class="chk" type="button" role="checkbox" aria-checked="${t.done?"true":"false"}" data-toggle="${t.id}" aria-label="تبديل الإنجاز">✓</button>
+    <span class="body">
+      <span class="ttl">${esc(t.title)}</span>
+      ${t.note?`<span class="note">${esc(t.note)}</span>`:""}
+      <span class="meta">
+        <span class="pill" style="background:color-mix(in srgb,${tc} 15%,transparent);color:${tc}"><i style="background:${tc}"></i>${TASK_CATS[t.cat]?TASK_CATS[t.cat].label:"مهمة"}</span>
+        <span class="pill ${PRIO_CLS[t.prio]||"p-low"}">${esc(t.prio)}</span>
+        ${late?`<span class="pill late">متأخرة</span>`:""}
+      </span>
+    </span>
+    <button class="iconbtn" type="button" data-edit="${t.id}" aria-label="تعديل">✎</button>
+  </div>`;
+}
+
+function dayPanel(ds){
+  const evs = evByDate[ds]||[], tks = tasksOn(ds), wi = weekInfo(ds);
+  return `<section class="panel">
+    <div class="panel-head">
+      <div class="dt">
+        <h3>${longDate(ds)}</h3>
+        <div class="sub">${wi?`الأسبوع الدراسي ${wi[1]} · الفصل ${wi[0]}`:"خارج أسابيع الدوام"}${HOLIDAY_DATES.has(ds)?" · عطلة رسمية":""}</div>
+      </div>
+      <button class="addbtn" type="button" data-add="${ds}">+ مهمة</button>
+    </div>
+    <div class="panel-body">
+      <div>
+        <div class="grp-t">من التقويم التربوي</div>
+        ${evs.length?evs.map(e=>evRow(e,{del:true})).join(""):`<p class="empty" style="padding:8px 0;text-align:right">لا توجد أحداث رسمية في هذا اليوم.</p>`}
+      </div>
+      <div>
+        <div class="grp-t">مهامي (${tks.length})</div>
+        ${tks.length?tks.map(t=>taskRow(t)).join(""):`<p class="empty" style="padding:8px 0;text-align:right">لم تُضِف مهامًّا بعد — اضغط «+ مهمة».</p>`}
+      </div>
+    </div>
+  </section>`;
+}
+
+function legend(){
+  return `<div class="legend">${Object.values(CATS).map(c=>`<span><i style="background:${c.color}"></i>${c.label}</span>`).join("")}<span><i style="background:var(--rose)"></i>مهامي</span></div>
+  <p class="hint">المصدر: الخطة الفصلية للعام الدراسي ٢٠٢٦–٢٠٢٧ م (التعليم العام) — وزارة التربية، دولة الكويت.</p>`;
+}
+
+function wireCal(){
+  const p=document.getElementById("prevm"), n=document.getElementById("nextm");
+  if(p) p.onclick=()=>{ let i=state.cur.y*12+state.cur.m-1; state.cur={y:Math.floor(i/12),m:i%12}; render(); };
+  if(n) n.onclick=()=>{ let i=state.cur.y*12+state.cur.m+1; state.cur={y:Math.floor(i/12),m:i%12}; render(); };
+  main.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{ state.mode=b.dataset.mode; render(); });
+  main.querySelectorAll(".cell[data-date]").forEach(b=>b.onclick=()=>{ state.sel=b.dataset.date; render(); });
+  wireCommon();
+}
+function wireCommon(){
+  main.querySelectorAll("[data-kill]").forEach(b=>b.onclick=()=>{
+    const ev = EVENTS.find(e=>e[3]===b.dataset.kill); if(!ev) return;
+    askConfirm({
+      title:"حذف حدث من التقويم",
+      text:"سيُحذف هذا الحدث نهائيًا من التقويم على كل أجهزتك. لا يمكن التراجع إلا بإعادة ضبط أحداث التقويم من تبويب الإحصائيات.",
+      what: ev[1] + " — " + longDate(ev[0]),
+      ok:"حذف نهائي",
+      run: async ()=>{ killed.add(ev[3]); await pushKilled(); }
+    });
+  });
+  main.querySelectorAll("[data-add]").forEach(b=>b.onclick=()=>openSheet(null,b.dataset.add));
+  main.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>openSheet(tasks.find(t=>t.id===b.dataset.edit)));
+  main.querySelectorAll("[data-toggle]").forEach(b=>b.onclick=()=>{
+    const t = tasks.find(x=>x.id===b.dataset.toggle); if(!t) return;
+    putTask(Object.assign({},t,{done:!t.done}));
+  });
+}
+
+/* ---------- تبويب المهام ---------- */
+function renderTasks(){
+  const FILTERS = [["all","الكل"],["today","اليوم"],["upcoming","قادمة"],["late","متأخرة"],["done","منجزة"]];
+  let list = tasks.slice();
+  if(state.filter==="today") list=list.filter(t=>t.date===TODAY);
+  else if(state.filter==="upcoming") list=list.filter(t=>!t.done && t.date>TODAY);
+  else if(state.filter==="late") list=list.filter(t=>!t.done && t.date<TODAY);
+  else if(state.filter==="done") list=list.filter(t=>t.done);
+  if(state.catFilter!=="all") list=list.filter(t=>t.cat===state.catFilter);
+  list.sort((a,b)=> (a.done-b.done) || a.date.localeCompare(b.date) || (PRIOS.indexOf(a.prio)-PRIOS.indexOf(b.prio)));
+
+  const groups={};
+  list.forEach(t=>{ (groups[t.date] ||= []).push(t); });
+
+  let html = `<div class="chips" role="group" aria-label="تصفية حسب الحالة">
+    ${FILTERS.map(([k,l])=>`<button class="chip" type="button" data-f="${k}" aria-pressed="${state.filter===k}">${l}</button>`).join("")}
+  </div>
+  <div class="chips" role="group" aria-label="تصفية حسب التصنيف">
+    <button class="chip" type="button" data-cf="all" aria-pressed="${state.catFilter==="all"}">كل التصنيفات</button>
+    ${Object.entries(TASK_CATS).map(([k,c])=>`<button class="chip" type="button" data-cf="${k}" aria-pressed="${state.catFilter===k}"><i style="background:${c.color}"></i>${c.label}</button>`).join("")}
+  </div>`;
+
+  const keys = Object.keys(groups);
+  if(!keys.length){
+    html += `<div class="card"><p class="empty">لا توجد مهام ضمن هذه التصفية.<br>افتح التقويم واختر يومًا ثم اضغط «+ مهمة».</p></div>`;
+  }else{
+    keys.forEach(d=>{
+      html += `<div class="card"><h3 style="display:flex;justify-content:space-between;gap:8px">
+        <span>${longDate(d)}</span>
+        <span style="font-size:11.5px;color:var(--ink-soft);font-weight:400">${(evByDate[d]||[]).length?`${(evByDate[d]||[]).length} حدث رسمي`:""}</span></h3>
+        ${groups[d].map(t=>taskRow(t)).join("")}</div>`;
+    });
+  }
+  html += `<p class="hint">إجمالي المهام المسجَّلة: <b class="num">${tasks.length}</b></p>`;
+  main.innerHTML = html;
+  main.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{ state.filter=b.dataset.f; render(); });
+  main.querySelectorAll("[data-cf]").forEach(b=>b.onclick=()=>{ state.catFilter=b.dataset.cf; render(); });
+  wireCommon();
+}
+
+/* ---------- تبويب الإحصائيات ---------- */
+function renderStats(){
+  const total=tasks.length, done=tasks.filter(t=>t.done).length;
+  const late=tasks.filter(t=>!t.done&&t.date<TODAY).length;
+  const soon=tasks.filter(t=>!t.done&&t.date>=TODAY&&t.date<=key(addDays(new Date(),7))).length;
+  const pct = total? Math.round(done/total*100) : 0;
+  const R=34, C=2*Math.PI*R;
+
+  const byCat = Object.entries(TASK_CATS).map(([k,c])=>{
+    const all=tasks.filter(t=>t.cat===k);
+    return {k,label:c.label,color:c.color,n:all.length,d:all.filter(t=>t.done).length};
+  }).filter(x=>x.n>0);
+  const maxN = Math.max(1,...byCat.map(x=>x.n));
+
+  const live = liveEvents();
+  const evCounts = Object.entries(CATS).map(([k,c])=>({label:c.label,color:c.color,n:live.filter(e=>e[2]===k).length}));
+  const maxE = Math.max(1,...evCounts.map(x=>x.n));
+
+  const next = live.filter(e=>e[0]>=TODAY).sort((a,b)=>a[0].localeCompare(b[0])).slice(0,4);
+
+  let html = `<div class="tiles">
+    <div class="tile"><div class="v num">${total}</div><div class="k">إجمالي مهامي</div></div>
+    <div class="tile"><div class="v num" style="color:var(--c-otla)">${done}</div><div class="k">مهام منجزة</div></div>
+    <div class="tile"><div class="v num" style="color:var(--c-imtihan)">${late}</div><div class="k">متأخرة عن موعدها</div></div>
+    <div class="tile"><div class="v num" style="color:var(--c-tasjeel)">${soon}</div><div class="k">خلال ٧ أيام</div></div>
+  </div>
+
+  <div class="card"><div class="ring">
+    <svg width="84" height="84" viewBox="0 0 84 84" aria-hidden="true">
+      <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="var(--violet)"/><stop offset="100%" stop-color="var(--rose)"/>
+      </linearGradient></defs>
+      <circle cx="42" cy="42" r="${R}" fill="none" stroke="var(--surface-2)" stroke-width="9"/>
+      <circle cx="42" cy="42" r="${R}" fill="none" stroke="url(#rg)" stroke-width="9" stroke-linecap="round"
+        stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct/100)}" transform="rotate(-90 42 42)"/>
+    </svg>
+    <div><div class="rt num">${pct}%</div><div class="rs">نسبة الإنجاز الكلية<br>${done} منجزة من ${total} مهمة</div></div>
+  </div></div>`;
+
+  html += `<div class="card"><h3>مهامي حسب التصنيف</h3>`;
+  if(byCat.length){
+    byCat.forEach(x=>{
+      html += `<div class="bar"><div class="l"><span>${x.label}</span><b class="num">${x.d} / ${x.n}</b></div>
+        <div class="track"><div class="fill" style="width:${Math.round(x.n/maxN*100)}%;background:${x.color}"></div></div></div>`;
+    });
+  }else{
+    html += `<p class="empty" style="padding:4px 0">لم تُسجَّل مهام بعد.</p>`;
+  }
+  html += `</div>`;
+
+  html += `<div class="card"><h3>محطات التقويم التربوي هذا العام</h3>`;
+  evCounts.filter(x=>x.n>0).forEach(x=>{
+    html += `<div class="bar"><div class="l"><span>${x.label}</span><b class="num">${x.n}</b></div>
+      <div class="track"><div class="fill" style="width:${Math.round(x.n/maxE*100)}%;background:${x.color}"></div></div></div>`;
+  });
+  html += `</div>`;
+
+  html += `<div class="card"><h3>القادم في التقويم</h3>`;
+  if(next.length){
+    next.forEach(([d,t,c])=>{
+      const days = Math.round((parse(d)-parse(TODAY))/86400000);
+      html += `<div class="ev"><span class="stripe" style="background:${CATS[c].color}"></span>
+        <span class="txt">${esc(t)}<span class="tag">${longDate(d)} · ${days===0?"اليوم":days===1?"غدًا":`بعد ${days} يومًا`}</span></span></div>`;
+    });
+  }else{
+    html += `<p class="empty" style="padding:4px 0">انتهت محطات هذا العام الدراسي.</p>`;
+  }
+  html += `</div>`;
+
+  html += `<div class="card"><h3>أحداث التقويم المحذوفة</h3>
+    <p style="font-size:13px;color:var(--ink-soft);margin:0 0 12px;line-height:1.7">
+      حذفتَ <b class="num">${killed.size}</b> من أصل <b class="num">${EVENTS.length}</b> حدثًا رسميًا.
+      إعادة الضبط تُرجع كل الأحداث المحذوفة دفعة واحدة ولا تمسّ مهامك.
+    </p>
+    <button class="btn ghost" id="resetev" type="button" ${killed.size?"":"disabled style=opacity:.45"}>إعادة ضبط أحداث التقويم</button>
+  </div>`;
+
+  main.innerHTML = html;
+  const rb = document.getElementById("resetev");
+  if(rb && killed.size) rb.onclick = ()=>askConfirm({
+    title:"إعادة ضبط أحداث التقويم",
+    text:`سيُعاد إدراج ${killed.size} حدثًا محذوفًا إلى التقويم على كل أجهزتك. مهامك المسجَّلة لن تتأثر.`,
+    what:"", ok:"إعادة الضبط",
+    run: async ()=>{ killed = new Set(); await pushKilled(); }
+  });
+}
+
+/* ============ نافذة التأكيد ============ */
+const cscrim=document.getElementById("cscrim");
+let pendingRun=null;
+function askConfirm(o){
+  document.getElementById("ctitle").textContent=o.title;
+  document.getElementById("ctext").textContent=o.text;
+  const w=document.getElementById("cwhat");
+  w.textContent=o.what||""; w.hidden=!o.what;
+  document.getElementById("c-ok").textContent=o.ok||"حذف نهائي";
+  pendingRun=o.run;
+  cscrim.hidden=false;
+}
+function closeConfirm(){ cscrim.hidden=true; pendingRun=null; }
+document.getElementById("c-no").onclick=closeConfirm;
+cscrim.onclick=e=>{ if(e.target===cscrim) closeConfirm(); };
+document.getElementById("c-ok").onclick=async ()=>{
+  const run=pendingRun; closeConfirm(); if(run) await run();
+};
+
+/* ============ نافذة المهمة ============ */
+const scrim=document.getElementById("scrim"), sheet=document.getElementById("sheet");
+let draft={cat:"tahdeer",prio:"متوسطة"};
+
+function optButtons(el, items, cur, cb){
+  el.innerHTML = items.map(it=>`<button class="opt" type="button" data-v="${it.v}" aria-pressed="${it.v===cur}">${it.dot?`<i style="background:${it.dot}"></i>`:""}${it.l}</button>`).join("");
+  el.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{ cb(b.dataset.v); });
+}
+function paintOpts(){
+  optButtons(document.getElementById("f-cat"),
+    Object.entries(TASK_CATS).map(([k,c])=>({v:k,l:c.label,dot:c.color})), draft.cat,
+    v=>{ draft.cat=v; paintOpts(); });
+  optButtons(document.getElementById("f-prio"),
+    PRIOS.map(p=>({v:p,l:p})), draft.prio,
+    v=>{ draft.prio=v; paintOpts(); });
+}
+function openSheet(task, date){
+  state.editing = task ? task.id : null;
+  draft = {cat: task? (task.cat||"tahdeer") : "tahdeer", prio: task? (task.prio||"متوسطة") : "متوسطة"};
+  const ds = task ? task.date : (date||state.sel);
+  document.getElementById("sheettitle").textContent = task ? "تعديل المهمة" : "مهمة جديدة";
+  document.getElementById("sheetsub").textContent = longDate(ds) + ((evByDate[ds]||[]).length? ` · ${(evByDate[ds]||[]).length} حدث رسمي في هذا اليوم` : "");
+  document.getElementById("f-title").value = task? task.title : "";
+  document.getElementById("f-note").value  = task? (task.note||"") : "";
+  document.getElementById("f-date").value  = ds;
+  document.getElementById("f-del").hidden  = !task;
+  paintOpts();
+  scrim.hidden = false;
+  setTimeout(()=>document.getElementById("f-title").focus(),50);
+}
+function closeSheet(){ scrim.hidden = true; state.editing=null; }
+
+document.getElementById("f-cancel").onclick = closeSheet;
+scrim.onclick = e => { if(e.target===scrim) closeSheet(); };
+document.addEventListener("keydown", e=>{
+  if(e.key!=="Escape") return;
+  if(!cscrim.hidden) closeConfirm();
+  else if(!scrim.hidden) closeSheet();
+});
+
+document.getElementById("f-save").onclick = async ()=>{
+  const title = document.getElementById("f-title").value.trim();
+  const date  = document.getElementById("f-date").value;
+  if(!title){ document.getElementById("f-title").focus(); return; }
+  if(!date){ document.getElementById("f-date").focus(); return; }
+  const old = state.editing ? tasks.find(t=>t.id===state.editing) : null;
+  const t = {
+    id: old? old.id : "t"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),
+    date, title, note: document.getElementById("f-note").value.trim(),
+    cat: draft.cat, prio: draft.prio, done: old? !!old.done : false,
+    ts: old? (old.ts||Date.now()) : Date.now()
+  };
+  state.sel = date;
+  const d = parse(date); state.cur = {y:d.getFullYear(), m:d.getMonth()};
+  closeSheet();
+  await putTask(t);
+};
+document.getElementById("f-del").onclick = ()=>{
+  const id = state.editing; const t = tasks.find(x=>x.id===id);
+  closeSheet();
+  if(!t) return;
+  askConfirm({
+    title:"حذف المهمة",
+    text:"سيُحذف هذا البند نهائيًا من مهامك.",
+    what:t.title+" — "+longDate(t.date),
+    ok:"حذف نهائي",
+    run: async ()=>{ await delTask(id); }
+  });
+};
+
+/* ============ التبويبات والوضع الليلي ============ */
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{ state.tab=b.dataset.tab; render(); });
+document.getElementById("themebtn").onclick = ()=>{
+  const cur = document.documentElement.getAttribute("data-theme");
+  const dark = cur ? cur==="dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.setAttribute("data-theme", dark?"light":"dark");
+  try{ localStorage.setItem("tarbawi_theme", dark?"light":"dark"); }catch(e){}
+};
+try{ const th=localStorage.getItem("tarbawi_theme"); if(th) document.documentElement.setAttribute("data-theme",th); }catch(e){}
+
+render();
+window.addEventListener("load", ()=>{
+  initStore();
+  if("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js").catch(()=>{});
+});
+</script>
+
+</body>
+</html>
