@@ -227,7 +227,7 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
 .pill.p-high{background:color-mix(in srgb,var(--c-imtihan) 14%,transparent);color:var(--c-imtihan)}
 .pill.p-mid{background:color-mix(in srgb,var(--c-tasjeel) 16%,transparent);color:var(--c-tasjeel)}
 .pill.late{background:color-mix(in srgb,var(--c-imtihan) 16%,transparent);color:var(--c-imtihan)}
-.iconbtn{border:0;background:transparent;color:var(--ink-soft);padding:4px 6px;border-radius:8px;font-size:13px;line-height:1}
+.iconbtn{border:0;background:transparent;color:var(--ink-soft);padding:5px;border-radius:8px;line-height:0;display:grid;place-items:center}
 .iconbtn:hover{background:var(--surface-2);color:var(--ink)}
 .empty{font-size:13px;color:var(--ink-soft);text-align:center;padding:16px 8px;line-height:1.7}
 
@@ -315,6 +315,39 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
 .btn.primary{background:var(--grad);color:var(--on-violet);box-shadow:0 4px 16px color-mix(in srgb,var(--violet) 40%,transparent)}
 .btn.ghost{background:var(--surface-2);color:var(--ink)}
 .btn.danger{background:transparent;color:var(--c-imtihan);flex:0 0 auto;padding-inline:16px}
+
+/* ---------- شريط التنبيهات ---------- */
+.alerts{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.alert{
+  display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:var(--r);
+  background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);
+  border-inline-start:4px solid var(--violet);text-align:start;width:100%;
+}
+.alert.late{border-inline-start-color:var(--c-imtihan)}
+.alert.ev{border-inline-start-color:var(--c-nataij)}
+.alert .n{
+  flex-shrink:0;min-width:27px;height:27px;padding:0 7px;border-radius:9px;display:grid;place-items:center;
+  font-family:var(--font-d);font-weight:700;font-size:13px;color:var(--on-violet);background:var(--violet);
+}
+.alert.late .n{background:var(--c-imtihan)}
+.alert.ev .n{background:var(--c-nataij);font-size:14px}
+.alert .tx{flex:1;min-width:0}
+.alert .tx b{font-family:var(--font-d);font-weight:600;display:block;font-size:13.5px;line-height:1.45}
+.alert .tx span{font-size:11.5px;color:var(--ink-soft);display:block;margin-top:1px}
+.alert .go{flex-shrink:0;color:var(--ink-soft);line-height:0}
+
+.tab{position:relative}
+.tab .badge{
+  position:absolute;inset-block-start:1px;inset-inline-end:calc(50% - 24px);
+  min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--c-imtihan);
+  color:var(--on-violet);font-size:10px;font-family:var(--font-d);font-weight:700;
+  display:grid;place-items:center;line-height:1;
+}
+.pill.rep{background:color-mix(in srgb,var(--violet) 14%,transparent);color:var(--violet)}
+.dayrow{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.dayrow .opt{padding:7px 0;min-width:40px;justify-content:center;flex:1}
+.sublabel{font-size:11.5px;font-family:var(--font-d);color:var(--ink-soft);margin:10px 0 5px;display:block}
+
 .legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:14px;padding:12px 14px;background:var(--surface-2);border-radius:var(--r)}
 .legend span{font-size:11.5px;color:var(--ink-soft);display:inline-flex;align-items:center;gap:5px}
 .legend i{width:8px;height:8px;border-radius:50%;display:block}
@@ -360,6 +393,15 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
       <input type="date" id="f-date">
     </div>
     <div class="field">
+      <label for="f-rep">التكرار</label>
+      <div class="opts" id="f-rep"></div>
+      <div class="dayrow" id="f-rep-days" hidden></div>
+      <div id="f-rep-until" hidden>
+        <label class="sublabel" for="f-until">يتوقف بعد تاريخ (اختياري)</label>
+        <input type="date" id="f-until">
+      </div>
+    </div>
+    <div class="field">
       <label for="f-cat">التصنيف</label>
       <div class="opts" id="f-cat"></div>
     </div>
@@ -385,8 +427,9 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
     <h2 id="ctitle">حذف نهائي</h2>
     <p id="ctext"></p>
     <div class="what" id="cwhat"></div>
-    <div class="sheet-actions">
+    <div class="sheet-actions" style="flex-wrap:wrap">
       <button class="btn del" id="c-ok" type="button">حذف نهائي</button>
+      <button class="btn ghost" id="c-ok2" type="button" hidden style="flex:1 1 100%"></button>
       <button class="btn ghost" id="c-no" type="button">إلغاء</button>
     </div>
   </div>
@@ -621,21 +664,27 @@ function stateLabel(){
 }
 function paintSync(){ const [c,t]=stateLabel(); setSync(c,t); }
 
+const rowOf = t => ({
+  id:t.id, user_id:USER.id, date:t.date, title:t.title, note:t.note||"",
+  cat:t.cat, prio:t.prio, done:!!t.done, ts:t.ts,
+  meta:{ rep:t.rep||{t:"none",d:[],until:""}, doneOn:t.doneOn||{}, skip:t.skip||[] }
+});
+const taskOf = r => {
+  const m = r.meta || {};
+  return { id:r.id, date:r.date, title:r.title, note:r.note||"", cat:r.cat, prio:r.prio,
+           done:!!r.done, ts:Number(r.ts)||0,
+           rep:m.rep||{t:"none",d:[],until:""}, doneOn:m.doneOn||{}, skip:m.skip||[] };
+};
+
 async function flush(){
   if(!SB||!USER) return false;
   while(outbox.length){
     const op = outbox[0];
     try{
       let r;
-      if(op.k==="put"){
-        const t=op.t;
-        r = await SB.from("tasks").upsert({id:t.id,user_id:USER.id,date:t.date,title:t.title,
-              note:t.note||"",cat:t.cat,prio:t.prio,done:!!t.done,ts:t.ts});
-      }else if(op.k==="del"){
-        r = await SB.from("tasks").delete().eq("id",op.id).eq("user_id",USER.id);
-      }else{
-        r = await SB.from("removed_events").upsert({user_id:USER.id, ids:op.ids});
-      }
+      if(op.k==="put")      r = await SB.from("tasks").upsert(rowOf(op.t));
+      else if(op.k==="del") r = await SB.from("tasks").delete().eq("id",op.id).eq("user_id",USER.id);
+      else                  r = await SB.from("removed_events").upsert({user_id:USER.id, ids:op.ids});
       if(r.error) throw r.error;
       outbox.shift(); saveOutbox();
     }catch(e){ paintSync(); return false; }
@@ -647,8 +696,7 @@ async function pull(){
   try{
     const r1 = await SB.from("tasks").select("*").eq("user_id",USER.id);
     if(r1.error) throw r1.error;
-    tasks = (r1.data||[]).map(r=>({id:r.id,date:r.date,title:r.title,note:r.note||"",
-      cat:r.cat,prio:r.prio,done:!!r.done,ts:Number(r.ts)||0}));
+    tasks = (r1.data||[]).map(taskOf);
     saveLocal();
     const r2 = await SB.from("removed_events").select("ids").eq("user_id",USER.id).maybeSingle();
     if(!r2.error){ killed = new Set((r2.data&&r2.data.ids)||[]); saveKilledLocal(); rebuildEvents(); }
@@ -724,9 +772,14 @@ document.getElementById("a-out").onclick = async ()=>{ try{ await SB.auth.signOu
 async function initStore(){
   loadLocal(); render(); paintSync();
   const cfg = window.TARBAWI_CONFIG||{};
-  if(!cfg.url || !cfg.anonKey || !window.supabase){ paintAuth(); return; }
+  const looksReal = /^https:\/\/[a-z0-9]{8,}\.supabase\.co\/?$/.test((cfg.url||"").trim())
+                    && (cfg.anonKey||"").trim().length >= 20;
+  if(!looksReal || !window.supabase){
+    if(cfg.url && !looksReal) setSync("wait","الإعدادات غير مكتملة");
+    paintAuth(); return;
+  }
   try{
-    SB = window.supabase.createClient(cfg.url, cfg.anonKey, {auth:{persistSession:true,autoRefreshToken:true}});
+    SB = window.supabase.createClient(cfg.url.trim(), cfg.anonKey.trim(), {auth:{persistSession:true,autoRefreshToken:true}});
     const {data} = await SB.auth.getSession();
     USER = (data && data.session) ? data.session.user : null;
     SB.auth.onAuthStateChange((_e,s)=>{ USER = s? s.user : null; paintAuth(); if(USER) sync(); });
@@ -738,7 +791,66 @@ async function initStore(){
   setInterval(()=>{ if(!document.hidden) sync(); }, 60000);
 }
 
-const tasksOn = d => tasks.filter(t=>t.date===d).sort((a,b)=>(a.done-b.done)||(PRIOS.indexOf(a.prio)-PRIOS.indexOf(b.prio))||((a.ts||0)-(b.ts||0)));
+/* ============ التكرار ============ */
+const REPEATS = [
+  {v:"none",   l:"بدون تكرار"},
+  {v:"weekly", l:"أسبوعي"},
+  {v:"school", l:"كل يوم دوام"},
+  {v:"monthly",l:"شهري"}
+];
+const YEAR_START = "2026-09-06", YEAR_END = "2027-07-31";
+const isRep = t => !!(t.rep && t.rep.t && t.rep.t !== "none");
+
+function repLabel(t){
+  if(!isRep(t)) return "";
+  const r = t.rep;
+  if(r.t==="weekly")  return "أسبوعي · " + (r.d||[]).slice().sort().map(i=>DAYS_S[i]).join("، ");
+  if(r.t==="school")  return "كل يوم دوام";
+  if(r.t==="monthly") return "شهري · يوم " + parse(t.date).getDate();
+  return "";
+}
+function hits(t, ds){
+  if(!isRep(t)) return t.date === ds;
+  const r = t.rep;
+  if(ds < t.date || ds > YEAR_END) return false;
+  if(r.until && ds > r.until) return false;
+  if((t.skip||[]).includes(ds)) return false;
+  const d = parse(ds), dow = d.getDay();
+  if(r.t==="weekly")  return (r.d||[]).includes(dow);
+  if(r.t==="school")  return dow>=0 && dow<=4 && !HOLIDAY_DATES.has(ds);
+  if(r.t==="monthly"){
+    const anchor = parse(t.date).getDate();
+    const dim = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
+    return d.getDate() === Math.min(anchor, dim);
+  }
+  return false;
+}
+const occDone = (t, ds) => isRep(t) ? !!(t.doneOn||{})[ds] : !!t.done;
+const occOf = (t, ds) => Object.assign({}, t, {date:ds, done:occDone(t,ds), _rep:isRep(t)});
+
+function tasksOn(ds){
+  return tasks.filter(t=>hits(t,ds)).map(t=>occOf(t,ds))
+    .sort((a,b)=>(a.done-b.done)||(PRIOS.indexOf(a.prio)-PRIOS.indexOf(b.prio))||((a.ts||0)-(b.ts||0)));
+}
+function expand(from, to){
+  const out = [];
+  tasks.forEach(t=>{
+    if(!isRep(t)){ out.push(occOf(t, t.date)); return; }
+    const start = t.date > from ? t.date : from;
+    const stop  = (t.rep.until && t.rep.until < to) ? t.rep.until : (to < YEAR_END ? to : YEAR_END);
+    if(start > stop) return;
+    for(let d = parse(start); key(d) <= stop; d = addDays(d,1)){
+      const ds = key(d);
+      if(hits(t, ds)) out.push(occOf(t, ds));
+    }
+  });
+  return out;
+}
+const LATE_WINDOW = 21;
+function lateList(){
+  const from = key(addDays(new Date(), -LATE_WINDOW));
+  return expand(from, TODAY).filter(t=>!t.done && t.date < TODAY);
+}
 
 /* ============ الرسم ============ */
 const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -750,6 +862,7 @@ function render(){
   if(state.tab==="cal") renderCal();
   else if(state.tab==="tasks") renderTasks();
   else renderStats();
+  paintBadges();
 }
 
 function monthNav(){
@@ -774,7 +887,7 @@ function dotColors(ds){
 }
 
 function renderCal(){
-  let html = monthNav();
+  let html = alertsHtml() + monthNav();
   if(state.mode==="month"){
     html += `<div class="wk" role="grid">`;
     DAYS_S.forEach((d,i)=> html += `<div class="wkh${(i===5||i===6)?" off":""}">${d}</div>`);
@@ -833,7 +946,7 @@ function taskRow(t){
   const late = !t.done && t.date < TODAY;
   const tc = TASK_CATS[t.cat] ? TASK_CATS[t.cat].color : "var(--ink-soft)";
   return `<div class="task${t.done?" done":""}">
-    <button class="chk" type="button" role="checkbox" aria-checked="${t.done?"true":"false"}" data-toggle="${t.id}" aria-label="تبديل الإنجاز">✓</button>
+    <button class="chk" type="button" role="checkbox" aria-checked="${t.done?"true":"false"}" data-toggle="${t.id}|${t.date}" aria-label="تبديل الإنجاز">✓</button>
     <span class="body">
       <span class="ttl">${esc(t.title)}</span>
       ${t.note?`<span class="note">${esc(t.note)}</span>`:""}
@@ -841,9 +954,10 @@ function taskRow(t){
         <span class="pill" style="background:color-mix(in srgb,${tc} 15%,transparent);color:${tc}"><i style="background:${tc}"></i>${TASK_CATS[t.cat]?TASK_CATS[t.cat].label:"مهمة"}</span>
         <span class="pill ${PRIO_CLS[t.prio]||"p-low"}">${esc(t.prio)}</span>
         ${late?`<span class="pill late">متأخرة</span>`:""}
+        ${t._rep?`<span class="pill rep">↻ ${esc(repLabel(t))}</span>`:""}
       </span>
     </span>
-    <button class="iconbtn" type="button" data-edit="${t.id}" aria-label="تعديل">✎</button>
+    <button class="iconbtn" type="button" data-edit="${t.id}|${t.date}" aria-label="تعديل"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-3-3L5 17v3z"/><path d="M13.5 6.5l4 4"/></svg></button>
   </div>`;
 }
 
@@ -895,28 +1009,90 @@ function wireCommon(){
     });
   });
   main.querySelectorAll("[data-add]").forEach(b=>b.onclick=()=>openSheet(null,b.dataset.add));
-  main.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>openSheet(tasks.find(t=>t.id===b.dataset.edit)));
+  main.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>{
+    const [id,ds] = b.dataset.edit.split("|");
+    openSheet(tasks.find(t=>t.id===id), null, ds);
+  });
   main.querySelectorAll("[data-toggle]").forEach(b=>b.onclick=()=>{
-    const t = tasks.find(x=>x.id===b.dataset.toggle); if(!t) return;
-    putTask(Object.assign({},t,{done:!t.done}));
+    const [id,ds] = b.dataset.toggle.split("|");
+    const t = tasks.find(x=>x.id===id); if(!t) return;
+    if(isRep(t)){
+      const m = Object.assign({}, t.doneOn||{});
+      if(m[ds]) delete m[ds]; else m[ds] = true;
+      putTask(Object.assign({},t,{doneOn:m}));
+    }else{
+      putTask(Object.assign({},t,{done:!t.done}));
+    }
+  });
+  main.querySelectorAll("[data-goto]").forEach(b=>b.onclick=()=>{
+    const g = b.dataset.goto;
+    if(g.startsWith("f:")){ state.tab="tasks"; state.filter=g.slice(2); state.catFilter="all"; }
+    else { state.tab="cal"; state.mode="month"; state.sel=g; const d=parse(g); state.cur={y:d.getFullYear(),m:d.getMonth()}; }
+    render(); window.scrollTo(0,0);
+  });
+}
+
+/* ---------- شريط التنبيهات ---------- */
+function alertCounts(){
+  const late = lateList().length;
+  const today = tasksOn(TODAY).filter(t=>!t.done).length;
+  const tom = tasksOn(key(addDays(new Date(),1))).filter(t=>!t.done).length;
+  return {late, today, tom};
+}
+function alertsHtml(){
+  const c = alertCounts();
+  const nextEv = liveEvents().filter(e=>e[0]>=TODAY).sort((a,b)=>a[0].localeCompare(b[0]))[0];
+  const rows = [];
+  if(c.late) rows.push(`<button class="alert late" type="button" data-goto="f:late">
+    <span class="n num">${c.late}</span>
+    <span class="tx"><b>مهام متأخرة عن موعدها</b><span>خلال آخر ${LATE_WINDOW} يومًا — اضغط للمراجعة</span></span>
+    <span class="go"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span></button>`);
+  if(c.today) rows.push(`<button class="alert" type="button" data-goto="f:today">
+    <span class="n num">${c.today}</span>
+    <span class="tx"><b>مهام اليوم</b><span>${c.tom?`و${c.tom} غدًا`:"لا شيء غدًا"}</span></span>
+    <span class="go"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span></button>`);
+  if(!c.late && !c.today && c.tom) rows.push(`<button class="alert" type="button" data-goto="f:upcoming">
+    <span class="n num">${c.tom}</span>
+    <span class="tx"><b>مهام غدًا</b><span>لا شيء مستحق اليوم</span></span>
+    <span class="go"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span></button>`);
+  if(nextEv){
+    const days = Math.round((parse(nextEv[0]) - parse(TODAY))/86400000);
+    rows.push(`<button class="alert ev" type="button" data-goto="${nextEv[0]}">
+      <span class="n">${days===0?"◉":"◷"}</span>
+      <span class="tx"><b>${esc(nextEv[1])}</b><span>${days===0?"اليوم":days===1?"غدًا":`بعد ${days} يومًا`} · ${longDate(nextEv[0])}</span></span>
+      <span class="go"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span></button>`);
+  }
+  return rows.length ? `<div class="alerts">${rows.join("")}</div>` : "";
+}
+function paintBadges(){
+  const c = alertCounts(), n = c.late + c.today;
+  document.querySelectorAll(".tab").forEach(b=>{
+    const old = b.querySelector(".badge"); if(old) old.remove();
+    if(b.dataset.tab==="tasks" && n>0){
+      const s = document.createElement("span");
+      s.className = "badge num"; s.textContent = n > 99 ? "99+" : n;
+      b.appendChild(s);
+    }
   });
 }
 
 /* ---------- تبويب المهام ---------- */
 function renderTasks(){
   const FILTERS = [["all","الكل"],["today","اليوم"],["upcoming","قادمة"],["late","متأخرة"],["done","منجزة"]];
-  let list = tasks.slice();
-  if(state.filter==="today") list=list.filter(t=>t.date===TODAY);
-  else if(state.filter==="upcoming") list=list.filter(t=>!t.done && t.date>TODAY);
-  else if(state.filter==="late") list=list.filter(t=>!t.done && t.date<TODAY);
-  else if(state.filter==="done") list=list.filter(t=>t.done);
+  const lateFrom = key(addDays(new Date(), -LATE_WINDOW));
+  let list;
+  if(state.filter==="today")         list = tasksOn(TODAY);
+  else if(state.filter==="upcoming") list = expand(TODAY, YEAR_END).filter(t=>!t.done && t.date>TODAY);
+  else if(state.filter==="late")     list = lateList();
+  else if(state.filter==="done")     list = expand(lateFrom, YEAR_END).filter(t=>t.done);
+  else                               list = expand(lateFrom, YEAR_END);
   if(state.catFilter!=="all") list=list.filter(t=>t.cat===state.catFilter);
   list.sort((a,b)=> (a.done-b.done) || a.date.localeCompare(b.date) || (PRIOS.indexOf(a.prio)-PRIOS.indexOf(b.prio)));
 
   const groups={};
   list.forEach(t=>{ (groups[t.date] ||= []).push(t); });
 
-  let html = `<div class="chips" role="group" aria-label="تصفية حسب الحالة">
+  let html = alertsHtml() + `<div class="chips" role="group" aria-label="تصفية حسب الحالة">
     ${FILTERS.map(([k,l])=>`<button class="chip" type="button" data-f="${k}" aria-pressed="${state.filter===k}">${l}</button>`).join("")}
   </div>
   <div class="chips" role="group" aria-label="تصفية حسب التصنيف">
@@ -935,7 +1111,9 @@ function renderTasks(){
         ${groups[d].map(t=>taskRow(t)).join("")}</div>`;
     });
   }
-  html += `<p class="hint">إجمالي المهام المسجَّلة: <b class="num">${tasks.length}</b></p>`;
+  const nRep = tasks.filter(isRep).length;
+  html += `<p class="hint">بنود مسجَّلة: <b class="num">${tasks.length}</b>${nRep?` — منها <b class="num">${nRep}</b> متكرّرة`:""}<br>
+    القائمة تعرض من ${longDate(lateFrom)} حتى نهاية العام الدراسي.</p>`;
   main.innerHTML = html;
   main.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{ state.filter=b.dataset.f; render(); });
   main.querySelectorAll("[data-cf]").forEach(b=>b.onclick=()=>{ state.catFilter=b.dataset.cf; render(); });
@@ -944,14 +1122,16 @@ function renderTasks(){
 
 /* ---------- تبويب الإحصائيات ---------- */
 function renderStats(){
-  const total=tasks.length, done=tasks.filter(t=>t.done).length;
-  const late=tasks.filter(t=>!t.done&&t.date<TODAY).length;
-  const soon=tasks.filter(t=>!t.done&&t.date>=TODAY&&t.date<=key(addDays(new Date(),7))).length;
+  const winFrom = key(addDays(new Date(),-30)), winTo = key(addDays(new Date(),30));
+  const win = expand(winFrom, winTo).filter(t=>t.date>=winFrom && t.date<=winTo);
+  const total=win.length, done=win.filter(t=>t.done).length;
+  const late=lateList().length;
+  const soon=win.filter(t=>!t.done&&t.date>=TODAY&&t.date<=key(addDays(new Date(),7))).length;
   const pct = total? Math.round(done/total*100) : 0;
   const R=34, C=2*Math.PI*R;
 
   const byCat = Object.entries(TASK_CATS).map(([k,c])=>{
-    const all=tasks.filter(t=>t.cat===k);
+    const all=win.filter(t=>t.cat===k);
     return {k,label:c.label,color:c.color,n:all.length,d:all.filter(t=>t.done).length};
   }).filter(x=>x.n>0);
   const maxN = Math.max(1,...byCat.map(x=>x.n));
@@ -963,7 +1143,7 @@ function renderStats(){
   const next = live.filter(e=>e[0]>=TODAY).sort((a,b)=>a[0].localeCompare(b[0])).slice(0,4);
 
   let html = `<div class="tiles">
-    <div class="tile"><div class="v num">${total}</div><div class="k">إجمالي مهامي</div></div>
+    <div class="tile"><div class="v num">${total}</div><div class="k">مهام خلال ٣٠ يومًا حولك</div></div>
     <div class="tile"><div class="v num" style="color:var(--c-otla)">${done}</div><div class="k">مهام منجزة</div></div>
     <div class="tile"><div class="v num" style="color:var(--c-imtihan)">${late}</div><div class="k">متأخرة عن موعدها</div></div>
     <div class="tile"><div class="v num" style="color:var(--c-tasjeel)">${soon}</div><div class="k">خلال ٧ أيام</div></div>
@@ -978,10 +1158,10 @@ function renderStats(){
       <circle cx="42" cy="42" r="${R}" fill="none" stroke="url(#rg)" stroke-width="9" stroke-linecap="round"
         stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct/100)}" transform="rotate(-90 42 42)"/>
     </svg>
-    <div><div class="rt num">${pct}%</div><div class="rs">نسبة الإنجاز الكلية<br>${done} منجزة من ${total} مهمة</div></div>
+    <div><div class="rt num">${pct}%</div><div class="rs">الإنجاز خلال ٣٠ يومًا حولك<br>${done} منجزة من ${total} مهمة</div></div>
   </div></div>`;
 
-  html += `<div class="card"><h3>مهامي حسب التصنيف</h3>`;
+  html += `<div class="card"><h3>مهامي حسب التصنيف <span style="font-size:11px;color:var(--ink-soft);font-weight:400">(٣٠ يومًا حولك)</span></h3>`;
   if(byCat.length){
     byCat.forEach(x=>{
       html += `<div class="bar"><div class="l"><span>${x.label}</span><b class="num">${x.d} / ${x.n}</b></div>
@@ -1020,6 +1200,7 @@ function renderStats(){
   </div>`;
 
   main.innerHTML = html;
+  wireCommon();
   const rb = document.getElementById("resetev");
   if(rb && killed.size) rb.onclick = ()=>askConfirm({
     title:"إعادة ضبط أحداث التقويم",
@@ -1032,25 +1213,31 @@ function renderStats(){
 /* ============ نافذة التأكيد ============ */
 const cscrim=document.getElementById("cscrim");
 let pendingRun=null;
+let pendingRun2=null;
 function askConfirm(o){
   document.getElementById("ctitle").textContent=o.title;
   document.getElementById("ctext").textContent=o.text;
   const w=document.getElementById("cwhat");
   w.textContent=o.what||""; w.hidden=!o.what;
   document.getElementById("c-ok").textContent=o.ok||"حذف نهائي";
-  pendingRun=o.run;
+  const b2=document.getElementById("c-ok2");
+  b2.hidden=!o.ok2; if(o.ok2) b2.textContent=o.ok2;
+  pendingRun=o.run; pendingRun2=o.run2||null;
   cscrim.hidden=false;
 }
-function closeConfirm(){ cscrim.hidden=true; pendingRun=null; }
+function closeConfirm(){ cscrim.hidden=true; pendingRun=null; pendingRun2=null; }
 document.getElementById("c-no").onclick=closeConfirm;
 cscrim.onclick=e=>{ if(e.target===cscrim) closeConfirm(); };
 document.getElementById("c-ok").onclick=async ()=>{
   const run=pendingRun; closeConfirm(); if(run) await run();
 };
+document.getElementById("c-ok2").onclick=async ()=>{
+  const run=pendingRun2; closeConfirm(); if(run) await run();
+};
 
 /* ============ نافذة المهمة ============ */
 const scrim=document.getElementById("scrim"), sheet=document.getElementById("sheet");
-let draft={cat:"tahdeer",prio:"متوسطة"};
+let draft={cat:"tahdeer",prio:"متوسطة",rep:{t:"none",d:[],until:""}};
 
 function optButtons(el, items, cur, cb){
   el.innerHTML = items.map(it=>`<button class="opt" type="button" data-v="${it.v}" aria-pressed="${it.v===cur}">${it.dot?`<i style="background:${it.dot}"></i>`:""}${it.l}</button>`).join("");
@@ -1063,17 +1250,52 @@ function paintOpts(){
   optButtons(document.getElementById("f-prio"),
     PRIOS.map(p=>({v:p,l:p})), draft.prio,
     v=>{ draft.prio=v; paintOpts(); });
+  optButtons(document.getElementById("f-rep"),
+    REPEATS.map(r=>({v:r.v,l:r.l})), draft.rep.t,
+    v=>{
+      draft.rep.t = v;
+      if(v==="weekly" && !draft.rep.d.length){
+        const ds = document.getElementById("f-date").value || state.sel;
+        draft.rep.d = [parse(ds).getDay()];
+      }
+      paintOpts();
+    });
+
+  const dayBox = document.getElementById("f-rep-days");
+  dayBox.hidden = draft.rep.t !== "weekly";
+  if(!dayBox.hidden){
+    dayBox.innerHTML = DAYS_S.map((d,i)=>
+      `<button class="opt" type="button" data-d="${i}" aria-pressed="${draft.rep.d.includes(i)}">${d}</button>`).join("");
+    dayBox.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>{
+      const i = +b.dataset.d;
+      draft.rep.d = draft.rep.d.includes(i) ? draft.rep.d.filter(x=>x!==i) : draft.rep.d.concat(i);
+      paintOpts();
+    });
+  }
+  const untilBox = document.getElementById("f-rep-until");
+  untilBox.hidden = draft.rep.t === "none";
+  document.getElementById("f-until").value = draft.rep.until || "";
 }
-function openSheet(task, date){
+function openSheet(task, date, occDate){
   state.editing = task ? task.id : null;
-  draft = {cat: task? (task.cat||"tahdeer") : "tahdeer", prio: task? (task.prio||"متوسطة") : "متوسطة"};
+  state.occDate = occDate || (task ? task.date : null);
+  draft = {
+    cat:  task ? (task.cat||"tahdeer") : "tahdeer",
+    prio: task ? (task.prio||"متوسطة") : "متوسطة",
+    rep:  task && task.rep ? {t:task.rep.t||"none", d:(task.rep.d||[]).slice(), until:task.rep.until||""}
+                           : {t:"none", d:[], until:""}
+  };
   const ds = task ? task.date : (date||state.sel);
-  document.getElementById("sheettitle").textContent = task ? "تعديل المهمة" : "مهمة جديدة";
-  document.getElementById("sheetsub").textContent = longDate(ds) + ((evByDate[ds]||[]).length? ` · ${(evByDate[ds]||[]).length} حدث رسمي في هذا اليوم` : "");
+  const repeating = task && isRep(task);
+  document.getElementById("sheettitle").textContent = task ? (repeating ? "تعديل المهمة المتكرّرة" : "تعديل المهمة") : "مهمة جديدة";
+  document.getElementById("sheetsub").textContent = repeating
+    ? `يبدأ من ${longDate(ds)} · ${repLabel(task)} — التعديل يسري على كل المواعيد`
+    : longDate(ds) + ((evByDate[ds]||[]).length? ` · ${(evByDate[ds]||[]).length} حدث رسمي في هذا اليوم` : "");
   document.getElementById("f-title").value = task? task.title : "";
   document.getElementById("f-note").value  = task? (task.note||"") : "";
   document.getElementById("f-date").value  = ds;
   document.getElementById("f-del").hidden  = !task;
+  document.querySelector('label[for="f-date"]').textContent = repeating ? "تاريخ بداية التكرار" : "التاريخ";
   paintOpts();
   scrim.hidden = false;
   setTimeout(()=>document.getElementById("f-title").focus(),50);
@@ -1094,10 +1316,21 @@ document.getElementById("f-save").onclick = async ()=>{
   if(!title){ document.getElementById("f-title").focus(); return; }
   if(!date){ document.getElementById("f-date").focus(); return; }
   const old = state.editing ? tasks.find(t=>t.id===state.editing) : null;
+  const until = document.getElementById("f-until").value || "";
+  let rep = {t:"none", d:[], until:""};
+  if(draft.rep.t !== "none"){
+    let days = draft.rep.d.slice();
+    if(draft.rep.t==="weekly" && !days.length) days = [parse(date).getDay()];
+    rep = {t:draft.rep.t, d:days, until};
+  }
   const t = {
     id: old? old.id : "t"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),
     date, title, note: document.getElementById("f-note").value.trim(),
-    cat: draft.cat, prio: draft.prio, done: old? !!old.done : false,
+    cat: draft.cat, prio: draft.prio,
+    done: (old && rep.t==="none") ? !!old.done : false,
+    rep,
+    doneOn: rep.t==="none" ? {} : (old && old.doneOn ? old.doneOn : {}),
+    skip:   rep.t==="none" ? [] : (old && old.skip   ? old.skip   : []),
     ts: old? (old.ts||Date.now()) : Date.now()
   };
   state.sel = date;
@@ -1106,9 +1339,25 @@ document.getElementById("f-save").onclick = async ()=>{
   await putTask(t);
 };
 document.getElementById("f-del").onclick = ()=>{
-  const id = state.editing; const t = tasks.find(x=>x.id===id);
+  const id = state.editing, ds = state.occDate;
+  const t = tasks.find(x=>x.id===id);
   closeSheet();
   if(!t) return;
+  if(isRep(t)){
+    askConfirm({
+      title:"حذف مهمة متكرّرة",
+      text:"هذه المهمة تتكرّر. اختر ما تريد حذفه — لا يمكن التراجع.",
+      what:t.title+" — موعد " + longDate(ds),
+      ok:"حذف السلسلة كلها",
+      ok2:"حذف موعد " + longDate(ds) + " فقط",
+      run:  async ()=>{ await delTask(id); },
+      run2: async ()=>{
+        const skip = (t.skip||[]).concat(ds);
+        await putTask(Object.assign({}, t, {skip}));
+      }
+    });
+    return;
+  }
   askConfirm({
     title:"حذف المهمة",
     text:"سيُحذف هذا البند نهائيًا من مهامك.",
