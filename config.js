@@ -1,10 +1,4 @@
-/* ============================================================
-   إعدادات المزامنة — عدّل هذا الملف وحده بعد إنشاء مشروع Supabase.
-   الخطوة ٢ في ملف README.md.
-
-   اتركه فارغًا إذا أردت التطبيق بالحفظ المحلي فقط (بدون مزامنة).
-   ============================================================ */
 window.TARBAWI_CONFIG = {
-  url:     "",   // مثال: https://abcdefghijkl.supabase.co
-  anonKey: ""    // مفتاح anon public (وليس service_role)
+  url:     "https://xxxxxxxx.supabase.co",
+  anonKey: "sb_publishable_"
 };
