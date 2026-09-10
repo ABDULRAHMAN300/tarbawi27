@@ -1,4 +1,4 @@
 window.TARBAWI_CONFIG = {
-  url:     "https://xxxxxxxx.supabase.co",
-  anonKey: "sb_publishable_"
+  url:     "https://dwsyctxhfbuzpcjilmwq.supabase.co",
+  anonKey: "sb_publishable_xDrnFMfYxuqI008QnSZ8yA_JoKKMqzg"
 };
