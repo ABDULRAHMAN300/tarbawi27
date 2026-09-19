@@ -32,11 +32,13 @@
   --line:#E4D8FA;
   --line-soft:#F0E9FB;
   --c-dawam:#7B2FF7;
-  --c-imtihan:#E5184C;
+  --c-imtihan:#E11D2E;
   --c-nataij:#1668E3;
-  --c-tasjeel:#F2760B;
-  --c-otla:#06A94D;
-  --c-munasaba:#D91BAE;
+  --c-tasjeel:#EA7317;
+  --c-otla:#0F9D58;
+  --c-munasaba:#D6217E;
+  --c-hissa:#1E3A8A;
+  --on-hissa:#FFFFFF;
   --on-violet:#FFFFFF;
   --grad:linear-gradient(135deg,#7B2FF7 0%,#B32FE0 55%,#FF4D9D 100%);
   --shadow:0 1px 2px rgba(90,40,160,.06), 0 8px 24px rgba(90,40,160,.09);
@@ -58,11 +60,13 @@
     --line:#3D2E60;
     --line-soft:#2E2350;
     --c-dawam:#B98BFF;
-    --c-imtihan:#FF6B8E;
+    --c-imtihan:#FF5C6E;
     --c-nataij:#5FA8FF;
     --c-tasjeel:#FFA24D;
     --c-otla:#3EDC8A;
-    --c-munasaba:#F07BE8;
+    --c-munasaba:#EE6FE0;
+    --c-hissa:#7FA6FF;
+    --on-hissa:#0E1A33;
     --on-violet:#180F2B;
     --grad:linear-gradient(135deg,#B98BFF 0%,#D97BF0 55%,#FF7DBB 100%);
     --shadow:0 1px 2px rgba(0,0,0,.34), 0 8px 24px rgba(0,0,0,.3);
@@ -81,11 +85,13 @@
   --line:#3D2E60;
   --line-soft:#2E2350;
   --c-dawam:#B98BFF;
-  --c-imtihan:#FF6B8E;
+  --c-imtihan:#FF5C6E;
   --c-nataij:#5FA8FF;
   --c-tasjeel:#FFA24D;
   --c-otla:#3EDC8A;
-  --c-munasaba:#F07BE8;
+  --c-munasaba:#EE6FE0;
+  --c-hissa:#7FA6FF;
+  --on-hissa:#0E1A33;
   --on-violet:#180F2B;
   --grad:linear-gradient(135deg,#B98BFF 0%,#D97BF0 55%,#FF7DBB 100%);
   --shadow:0 1px 2px rgba(0,0,0,.34), 0 8px 24px rgba(0,0,0,.3);
@@ -225,7 +231,7 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
 .pill{font-size:10.5px;font-family:var(--font-d);padding:2.5px 8px;border-radius:999px;background:var(--surface-2);color:var(--ink-soft);display:inline-flex;align-items:center;gap:4px}
 .pill i{width:6px;height:6px;border-radius:50%;display:block}
 .pill.p-high{background:color-mix(in srgb,var(--c-imtihan) 14%,transparent);color:var(--c-imtihan)}
-.pill.p-mid{background:color-mix(in srgb,var(--c-tasjeel) 16%,transparent);color:var(--c-tasjeel)}
+.pill.p-mid{background:var(--surface-2);color:var(--ink-soft)}
 .pill.late{background:color-mix(in srgb,var(--c-imtihan) 16%,transparent);color:var(--c-imtihan)}
 .iconbtn{border:0;background:transparent;color:var(--ink-soft);padding:5px;border-radius:8px;line-height:0;display:grid;place-items:center}
 .iconbtn:hover{background:var(--surface-2);color:var(--ink)}
@@ -344,6 +350,63 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
   display:grid;place-items:center;line-height:1;
 }
 .pill.rep{background:color-mix(in srgb,var(--violet) 14%,transparent);color:var(--violet)}
+.pill.clash{background:color-mix(in srgb,var(--c-imtihan) 16%,transparent);color:var(--c-imtihan)}
+.pill.hissa{background:var(--c-hissa);color:var(--on-hissa);font-weight:700}
+.pill.standby{background:transparent;border:1px dashed var(--c-hissa);color:var(--c-hissa)}
+.task .prog{
+  display:block;font-size:12.5px;color:var(--ink);margin-top:5px;padding:6px 9px;
+  background:color-mix(in srgb,var(--c-otla) 12%,transparent);border-radius:9px;
+  border-inline-start:3px solid var(--c-otla);line-height:1.6;
+}
+
+/* ---------- جدول الحصص ---------- */
+.tt-wrap{margin-top:14px;background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r);box-shadow:var(--shadow);padding:12px}
+.tt-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.tt-head .lbl{flex:1;font-family:var(--font-d);font-weight:600;font-size:13px;text-align:center}
+.tt-head .lbl small{display:block;font-size:10.5px;font-weight:400;color:var(--ink-soft);font-family:var(--font-b)}
+.tt{display:grid;grid-template-columns:26px repeat(5,1fr);gap:3px}
+.tt .h{font-size:10px;font-family:var(--font-d);color:var(--ink-soft);text-align:center;padding-bottom:2px}
+.tt .pn{display:grid;place-items:center;font-size:11px;font-family:var(--font-d);font-weight:700;
+  color:var(--violet);background:var(--surface-2);border-radius:7px}
+.tt .c{min-height:40px;border-radius:7px;background:var(--surface-2);padding:3px 2px;
+  display:flex;flex-direction:column;gap:2px;align-items:center;justify-content:center;border:0}
+.tt .c.has{background:color-mix(in srgb,var(--c-hissa) 14%,transparent)}
+.tt .c b{font-size:10px;font-family:var(--font-d);font-weight:700;color:var(--c-hissa);line-height:1.25;
+  text-align:center;word-break:break-word}
+.tt .c .sb{font-size:8.5px;color:var(--ink-soft);font-family:var(--font-d)}
+.tt .c.today-col{outline:1.5px solid var(--violet);outline-offset:-1.5px}
+.ttbtn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:7px 11px;
+  font-size:12px;font-family:var(--font-d);color:var(--violet);display:inline-flex;align-items:center;gap:6px}
+
+/* ---------- الصفوف ---------- */
+.clsrow{display:flex;align-items:flex-start;gap:10px;padding:9px 0}
+.clsrow+.clsrow{border-top:1px solid var(--line-soft)}
+.clsrow .dt{flex:0 0 78px;font-size:11.5px;color:var(--ink-soft);font-family:var(--font-d);line-height:1.5}
+.clsrow .tx{flex:1;min-width:0;font-size:13px;line-height:1.6;word-wrap:break-word}
+.avatar{flex-shrink:0;height:30px;padding:0 11px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;
+  font-family:var(--font-d);font-weight:700;font-size:12.5px;color:var(--on-hissa);background:var(--c-hissa)}
+.stu-h{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.stu-h .who{flex:1;min-width:0}
+.stu-h .who b{display:block;font-family:var(--font-d);font-size:14.5px;line-height:1.4}
+.stu-h .who span{font-size:11.5px;color:var(--ink-soft)}
+
+/* ---------- البحث ---------- */
+.search{position:relative;margin-top:12px}
+.search input{width:100%;border:1px solid var(--line);background:var(--surface);color:var(--ink);
+  border-radius:12px;padding:11px 38px 11px 12px;font-family:var(--font-b);font-size:14px}
+.search svg{position:absolute;inset-inline-start:auto;right:12px;top:50%;transform:translateY(-50%);
+  width:16px;height:16px;stroke:var(--ink-soft);fill:none;stroke-width:2}
+.rowbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.nextline{font-size:12.5px;color:var(--ink-soft);line-height:1.8}
+.nextline b{color:var(--ink);font-family:var(--font-d)}
+.pbadge{
+  flex-shrink:0;width:30px;height:30px;border-radius:10px;background:var(--grad);
+  color:var(--on-violet);font-family:var(--font-d);font-weight:700;font-size:13px;
+  display:grid;place-items:center;line-height:1;margin-top:1px;
+  box-shadow:0 2px 8px color-mix(in srgb,var(--violet) 32%,transparent);
+}
+.task.done .pbadge{opacity:.45}
 .dayrow{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
 .dayrow .opt{padding:7px 0;min-width:40px;justify-content:center;flex:1}
 .sublabel{font-size:11.5px;font-family:var(--font-d);color:var(--ink-soft);margin:10px 0 5px;display:block}
@@ -374,6 +437,8 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
       <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>التقويم</button>
     <button class="tab" data-tab="tasks" aria-selected="false" type="button">
       <svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>المهام</button>
+    <button class="tab" data-tab="classes" aria-selected="false" type="button">
+      <svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M7 10v5c0 1.7 2.2 3 5 3s5-1.3 5-3v-5"/></svg>الصفوف</button>
     <button class="tab" data-tab="stats" aria-selected="false" type="button">
       <svg viewBox="0 0 24 24"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>الإحصائيات</button>
   </div>
@@ -404,6 +469,18 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
     <div class="field">
       <label for="f-cat">التصنيف</label>
       <div class="opts" id="f-cat"></div>
+    </div>
+    <div class="field" id="f-hissa-box" hidden>
+      <label for="f-class">الصف</label>
+      <input type="text" id="f-class" list="classlist" placeholder="مثال: 2/10" autocomplete="off">
+      <datalist id="classlist"></datalist>
+      <label class="sublabel" for="f-period">رقم الحصة</label>
+      <div class="dayrow" id="f-period"></div>
+      <div class="opts" id="f-standby" style="margin-top:10px"></div>
+    </div>
+    <div class="field" id="f-prog-box" hidden>
+      <label for="f-prog">ما أُنجز في هذا الموعد</label>
+      <textarea id="f-prog" placeholder="مثال: أنهينا الدرس الثاني — تبقّى تمارين الصفحة 45"></textarea>
     </div>
     <div class="field">
       <label for="f-prio">الأولوية</label>
@@ -579,14 +656,22 @@ const WEEKS = {
 };
 
 const TASK_CATS = {
+  hissa:  {label:"حصة",     color:"var(--c-hissa)"},
   tahdeer:{label:"تحضير",   color:"var(--c-dawam)"},
   taqweem:{label:"تقييم",   color:"var(--c-imtihan)"},
   idari:  {label:"إداري",   color:"var(--c-tasjeel)"},
-  ijtimaa:{label:"اجتماع",  color:"var(--c-nataij)"},
+  ijtimaa:{label:"اجتماع",  color:"var(--c-munasaba)"},
   shakhsi:{label:"شخصي",    color:"var(--c-otla)"}
 };
 const PRIOS = ["عالية","متوسطة","منخفضة"];
 const PRIO_CLS = {"عالية":"p-high","متوسطة":"p-mid","منخفضة":"p-low"};
+
+/* الحصص المدرسية */
+const PERIODS = ["الأولى","الثانية","الثالثة","الرابعة","الخامسة","السادسة","السابعة"];
+const CLASS_SEED = ["2/10","3/11 ع","4/11 ع"];
+const isHissa = t => t.cat === "hissa";
+const progOn = (t, ds) => (t.progress||{})[ds] || "";
+const periodLabel = n => (n>=1 && n<=7) ? "الحصة " + PERIODS[n-1] : "";
 
 const MONTHS = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
 const DAYS   = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
@@ -629,7 +714,7 @@ const state = {
   tab:"cal", mode:"month",
   cur:{y:2026,m:8},
   sel:(TODAY>="2026-09-01"&&TODAY<="2027-08-31")?TODAY:"2026-09-06",
-  filter:"all", catFilter:"all",
+  filter:"all", catFilter:"all", q:"",
   editing:null
 };
 if(TODAY>="2026-09-01"&&TODAY<="2027-08-31"){
@@ -667,13 +752,15 @@ function paintSync(){ const [c,t]=stateLabel(); setSync(c,t); }
 const rowOf = t => ({
   id:t.id, user_id:USER.id, date:t.date, title:t.title, note:t.note||"",
   cat:t.cat, prio:t.prio, done:!!t.done, ts:t.ts,
-  meta:{ rep:t.rep||{t:"none",d:[],until:""}, doneOn:t.doneOn||{}, skip:t.skip||[] }
+  meta:{ rep:t.rep||{t:"none",d:[],until:""}, doneOn:t.doneOn||{}, skip:t.skip||[],
+         cls:t.cls||"", period:t.period||0, standby:!!t.standby, progress:t.progress||{} }
 });
 const taskOf = r => {
   const m = r.meta || {};
   return { id:r.id, date:r.date, title:r.title, note:r.note||"", cat:r.cat, prio:r.prio,
            done:!!r.done, ts:Number(r.ts)||0,
-           rep:m.rep||{t:"none",d:[],until:""}, doneOn:m.doneOn||{}, skip:m.skip||[] };
+           rep:m.rep||{t:"none",d:[],until:""}, doneOn:m.doneOn||{}, skip:m.skip||[],
+           cls:m.cls||"", period:m.period||0, standby:!!m.standby, progress:m.progress||{} };
 };
 
 async function flush(){
@@ -828,9 +915,22 @@ function hits(t, ds){
 const occDone = (t, ds) => isRep(t) ? !!(t.doneOn||{})[ds] : !!t.done;
 const occOf = (t, ds) => Object.assign({}, t, {date:ds, done:occDone(t,ds), _rep:isRep(t)});
 
+const ord = t => isHissa(t) && t.period ? t.period : 99;
+const isNisab = t => isHissa(t) && !t.standby;
 function tasksOn(ds){
   return tasks.filter(t=>hits(t,ds)).map(t=>occOf(t,ds))
-    .sort((a,b)=>(a.done-b.done)||(PRIOS.indexOf(a.prio)-PRIOS.indexOf(b.prio))||((a.ts||0)-(b.ts||0)));
+    .sort((a,b)=>(a.done-b.done)||(ord(a)-ord(b))
+               ||(PRIOS.indexOf(a.prio)-PRIOS.indexOf(b.prio))||((a.ts||0)-(b.ts||0)));
+}
+/* حصتان في نفس اليوم بنفس الرقم */
+function clashKeys(list){
+  const seen = {}, bad = new Set();
+  list.forEach(t=>{
+    if(!isHissa(t) || !t.period) return;
+    if(seen[t.period]){ bad.add(seen[t.period]); bad.add(t.id+"|"+t.date); }
+    else seen[t.period] = t.id+"|"+t.date;
+  });
+  return bad;
 }
 function expand(from, to){
   const out = [];
@@ -861,6 +961,7 @@ function render(){
   document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected", b.dataset.tab===state.tab));
   if(state.tab==="cal") renderCal();
   else if(state.tab==="tasks") renderTasks();
+  else if(state.tab==="classes") renderClasses();
   else renderStats();
   paintBadges();
 }
@@ -874,8 +975,9 @@ function monthNav(){
     <button class="navbtn" id="nextm" type="button" ${idx>=MAX_M?"disabled":""} aria-label="الشهر التالي">‹</button>
   </div>
   <div class="seg" role="group">
-    <button type="button" data-mode="month" aria-pressed="${state.mode==="month"}">عرض شهري</button>
-    <button type="button" data-mode="week" aria-pressed="${state.mode==="week"}">عرض أسبوعي</button>
+    <button type="button" data-mode="month" aria-pressed="${state.mode==="month"}">شهري</button>
+    <button type="button" data-mode="week" aria-pressed="${state.mode==="week"}">أسبوعي</button>
+    <button type="button" data-mode="table" aria-pressed="${state.mode==="table"}">جدول الحصص</button>
   </div>`;
 }
 
@@ -912,6 +1014,8 @@ function renderCal(){
     html += `</div>`;
     html += dayPanel(state.sel);
     html += legend();
+  }else if(state.mode==="table"){
+    html += renderTable();
   }else{
     const sel = parse(state.sel);
     const sun = addDays(sel, -sel.getDay());
@@ -927,7 +1031,7 @@ function renderCal(){
           <button class="mini" type="button" data-add="${ds}">+ مهمة</button>
         </div>
         ${evs.length?`<div style="margin-top:6px">${evs.map(e=>evRow(e,{del:true})).join("")}</div>`:""}
-        ${tks.length?`<div style="margin-top:4px">${tks.map(t=>taskRow(t)).join("")}</div>`:""}
+        ${tks.length?`<div style="margin-top:4px">${(()=>{const ck=clashKeys(tks);return tks.map(t=>taskRow(t,ck)).join("")})()}</div>`:""}
         ${(!evs.length&&!tks.length)?`<p style="font-size:12.5px;color:var(--ink-soft);margin:4px 0 0">لا يوجد شيء مسجَّل.</p>`:""}
       </div>`;
     }
@@ -942,18 +1046,27 @@ function evRow(e, opts){
   return `<div class="ev"><span class="stripe" style="background:${CATS[e.c].color}"></span>
     <span class="txt">${esc(e.t)}<span class="tag">${CATS[e.c].label}</span></span>${del}</div>`;
 }
-function taskRow(t){
+function taskRow(t, clashes){
   const late = !t.done && t.date < TODAY;
   const tc = TASK_CATS[t.cat] ? TASK_CATS[t.cat].color : "var(--ink-soft)";
+  const hs = isHissa(t);
+  const isClash = clashes && clashes.has(t.id+"|"+t.date);
   return `<div class="task${t.done?" done":""}">
     <button class="chk" type="button" role="checkbox" aria-checked="${t.done?"true":"false"}" data-toggle="${t.id}|${t.date}" aria-label="تبديل الإنجاز">✓</button>
+    ${hs && t.period ? `<span class="pbadge num" aria-hidden="true">${t.period}</span>` : ""}
     <span class="body">
       <span class="ttl">${esc(t.title)}</span>
       ${t.note?`<span class="note">${esc(t.note)}</span>`:""}
+      ${hs && progOn(t,t.date)?`<span class="prog">${esc(progOn(t,t.date))}</span>`:""}
       <span class="meta">
-        <span class="pill" style="background:color-mix(in srgb,${tc} 15%,transparent);color:${tc}"><i style="background:${tc}"></i>${TASK_CATS[t.cat]?TASK_CATS[t.cat].label:"مهمة"}</span>
+        ${hs ? `<span class="pill hissa">حصة</span>`
+             : `<span class="pill" style="background:color-mix(in srgb,${tc} 15%,transparent);color:${tc}"><i style="background:${tc}"></i>${TASK_CATS[t.cat]?TASK_CATS[t.cat].label:"مهمة"}</span>`}
+        ${hs && t.cls ? `<span class="pill" style="background:color-mix(in srgb,${tc} 15%,transparent);color:${tc}">${esc(t.cls)}</span>` : ""}
+        ${hs && t.period ? `<span class="pill">${periodLabel(t.period)}</span>` : ""}
+        ${hs && t.standby ? `<span class="pill standby">احتياط</span>` : ""}
         <span class="pill ${PRIO_CLS[t.prio]||"p-low"}">${esc(t.prio)}</span>
         ${late?`<span class="pill late">متأخرة</span>`:""}
+        ${isClash?`<span class="pill clash">تعارض</span>`:""}
         ${t._rep?`<span class="pill rep">↻ ${esc(repLabel(t))}</span>`:""}
       </span>
     </span>
@@ -978,7 +1091,7 @@ function dayPanel(ds){
       </div>
       <div>
         <div class="grp-t">مهامي (${tks.length})</div>
-        ${tks.length?tks.map(t=>taskRow(t)).join(""):`<p class="empty" style="padding:8px 0;text-align:right">لم تُضِف مهامًّا بعد — اضغط «+ مهمة».</p>`}
+        ${tks.length?(()=>{const ck=clashKeys(tks);return tks.map(t=>taskRow(t,ck)).join("")})():`<p class="empty" style="padding:8px 0;text-align:right">لم تُضِف مهامًّا بعد — اضغط «+ مهمة».</p>`}
       </div>
     </div>
   </section>`;
@@ -995,6 +1108,18 @@ function wireCal(){
   if(n) n.onclick=()=>{ let i=state.cur.y*12+state.cur.m+1; state.cur={y:Math.floor(i/12),m:i%12}; render(); };
   main.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{ state.mode=b.dataset.mode; render(); });
   main.querySelectorAll(".cell[data-date]").forEach(b=>b.onclick=()=>{ state.sel=b.dataset.date; render(); });
+  main.querySelectorAll("[data-wk]").forEach(b=>b.onclick=()=>{
+    const n = +b.dataset.wk;
+    state.sel = n===0 ? TODAY : key(addDays(parse(state.sel), n*7));
+    const d = parse(state.sel); state.cur = {y:d.getFullYear(), m:d.getMonth()};
+    render();
+  });
+  const pngBtn = document.getElementById("tt-png");
+  if(pngBtn) pngBtn.onclick = async ()=>{
+    pngBtn.textContent = "جارٍ التجهيز…";
+    try{ await exportTimetable(); }catch(e){}
+    pngBtn.textContent = "⬇ تصدير الجدول صورة";
+  };
   wireCommon();
 }
 function wireCommon(){
@@ -1076,6 +1201,179 @@ function paintBadges(){
   });
 }
 
+/* ---------- حفظ ملف (يعمل في نسخة كلود وفي النسخة المستقلة) ---------- */
+async function saveFile(filename, data, mime){
+  try{
+    const dl = (window.claude && claude.use) ? await claude.use("downloads") : null;
+    if(dl){ await dl.save({filename, data}); return "ok"; }
+  }catch(e){ if(e && e.code === "declined") return "declined"; }
+  try{
+    const blob = data instanceof Blob ? data : new Blob([data], {type:mime||"text/plain"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 2000);
+    return "ok";
+  }catch(e){ return "fail"; }
+}
+
+/* ---------- جدول الحصص الأسبوعي ---------- */
+const SCHOOL_DAYS = [0,1,2,3,4];           /* الأحد .. الخميس */
+function weekSunday(ds){ const d = parse(ds); return addDays(d, -d.getDay()); }
+
+function timetableData(sunday){
+  const grid = {};
+  SCHOOL_DAYS.forEach(i=>{
+    const ds = key(addDays(sunday,i));
+    tasksOn(ds).filter(isHissa).forEach(t=>{
+      const pr = t.period || 0; if(!pr) return;
+      (grid[pr+"-"+i] ||= []).push(t);
+    });
+  });
+  return grid;
+}
+function renderTable(){
+  const sunday = weekSunday(state.sel);
+  const grid = timetableData(sunday);
+  const total = Object.values(grid).reduce((n,a)=>n+a.length,0);
+  const nisab = Object.values(grid).reduce((n,a)=>n+a.filter(isNisab).length,0);
+
+  let cells = `<div class="h"></div>` + SCHOOL_DAYS.map(i=>{
+    const d = addDays(sunday,i);
+    return `<div class="h">${DAYS_S[d.getDay()]}<br><span class="num">${d.getDate()}</span></div>`;
+  }).join("");
+
+  for(let pr=1; pr<=7; pr++){
+    cells += `<div class="pn num">${pr}</div>`;
+    SCHOOL_DAYS.forEach(i=>{
+      const ds = key(addDays(sunday,i));
+      const list = grid[pr+"-"+i] || [];
+      const isToday = ds === TODAY;
+      cells += `<button type="button" class="c${list.length?" has":""}${isToday?" today-col":""}" data-goto="${ds}" aria-label="${longDate(ds)} — ${periodLabel(pr)}">
+        ${list.map(t=>`<b>${esc(t.cls||"—")}</b>${t.standby?`<span class="sb">احتياط</span>`:""}`).join("")}
+      </button>`;
+    });
+  }
+
+  return `<div class="tt-wrap">
+    <div class="tt-head">
+      <button class="navbtn" type="button" data-wk="-1" aria-label="الأسبوع السابق">›</button>
+      <div class="lbl">أسبوع ${longDate(key(sunday))}
+        <small><span class="num">${nisab}</span> حصة نصاب${total-nisab?` · <span class="num">${total-nisab}</span> احتياط`:""}</small></div>
+      <button class="navbtn" type="button" data-wk="1" aria-label="الأسبوع التالي">‹</button>
+    </div>
+    <div class="tt">${cells}</div>
+    <div class="rowbtns">
+      <button class="ttbtn" type="button" id="tt-png">⬇ تصدير الجدول صورة</button>
+      <button class="ttbtn" type="button" data-wk="0">هذا الأسبوع</button>
+    </div>
+  </div>
+  <p class="hint">الجدول يُبنى تلقائيًا من مهام تصنيف «حصة» — رقم الحصة هو الصف، واليوم هو العمود.</p>`;
+}
+
+/* رسم الجدول على Canvas ثم تصديره PNG */
+async function exportTimetable(){
+  const sunday = weekSunday(state.sel);
+  const grid = timetableData(sunday);
+  const S = 2, W = 1000, colW = 176, rowH = 74, padX = 24, headH = 132;
+  const H = headH + rowH*7 + 54;
+  const cv = document.createElement("canvas");
+  cv.width = W*S; cv.height = H*S;
+  const x = cv.getContext("2d");
+  x.scale(S,S);
+  x.direction = "rtl"; x.textAlign = "center"; x.textBaseline = "middle";
+  const F = (sz,w) => `${w||600} ${sz}px "Noto Kufi Arabic", sans-serif`;
+
+  x.fillStyle = "#FBF7FF"; x.fillRect(0,0,W,H);
+  const g = x.createLinearGradient(0,0,W,0);
+  g.addColorStop(0,"#7B2FF7"); g.addColorStop(1,"#FF4D9D");
+  x.fillStyle = g; x.fillRect(0,0,W,78);
+  x.fillStyle = "#fff"; x.font = F(30,700);
+  x.fillText("جدول الحصص الأسبوعي", W/2, 32);
+  x.font = F(17,400);
+  x.fillText("أسبوع " + longDate(key(sunday)), W/2, 60);
+
+  const right = W - padX, colStart = right - 52;
+  x.font = F(16,700); x.fillStyle = "#493463";
+  SCHOOL_DAYS.forEach(i=>{
+    const d = addDays(sunday,i);
+    const cx = colStart - i*colW - colW/2;
+    x.fillText(DAYS[d.getDay()] + " " + d.getDate(), cx, headH - 18);
+  });
+
+  for(let pr=1; pr<=7; pr++){
+    const y = headH + (pr-1)*rowH;
+    x.fillStyle = "#EEEAF2";
+    x.beginPath(); x.roundRect(right-50, y+4, 46, rowH-8, 8); x.fill();
+    x.fillStyle = "#7B2FF7"; x.font = F(19,700);
+    x.fillText(String(pr), right-27, y+rowH/2);
+
+    SCHOOL_DAYS.forEach(i=>{
+      const list = grid[pr+"-"+i] || [];
+      const cx = colStart - i*colW - colW/2;
+      x.fillStyle = list.length ? "#E3E9F7" : "#F4F0FA";
+      x.beginPath(); x.roundRect(cx-colW/2+4, y+4, colW-8, rowH-8, 8); x.fill();
+      if(list.length){
+        const lines = list.map(t=>(t.cls||"—") + (t.standby ? " (احتياط)" : ""));
+        x.fillStyle = "#1E3A8A"; x.font = F(17,700);
+        const start = y + rowH/2 - (lines.length-1)*11;
+        lines.forEach((L,k)=> x.fillText(L, cx, start + k*22));
+      }
+    });
+  }
+  x.fillStyle = "#6E6285"; x.font = F(13,400);
+  x.fillText("مهام التقويم التربوي — " + longDate(TODAY), W/2, H-26);
+
+  const blob = await new Promise(r=>cv.toBlob(r,"image/png"));
+  if(!blob){ return; }
+  await saveFile("جدول-الحصص-" + key(sunday) + ".png", blob, "image/png");
+}
+
+/* ---------- تبويب الصفوف ---------- */
+function renderClasses(){
+  const from = key(addDays(new Date(),-180)), to = YEAR_END;
+  const all = expand(from, to).filter(isHissa);
+  const byCls = {};
+  all.forEach(t=>{ (byCls[t.cls || "بدون صف"] ||= []).push(t); });
+  const names = Object.keys(byCls).sort();
+
+  const wk = expand(TODAY, key(addDays(new Date(),7))).filter(isHissa);
+
+  let html = `<p class="hint" style="margin-top:14px">متابعة ما أُنجز مع كل صف — تُكتب من زر التعديل على أي حصة في التقويم.</p>`;
+  if(!names.length){
+    html += `<div class="card"><p class="empty">لا صفوف بعد.<br>أضف مهمة بتصنيف «حصة» وحدّد الصف ورقم الحصة.</p></div>`;
+    main.innerHTML = html; wireCommon(); return;
+  }
+  names.forEach(n=>{
+    const list = byCls[n];
+    const wkN  = wk.filter(t=>(t.cls||"بدون صف")===n && !t.standby).length;  /* خلال 7 أيام */
+    const logs = list.filter(t=>progOn(t,t.date))
+                     .sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);
+    const last = logs[0];
+    html += `<div class="card">
+      <div class="stu-h">
+        <span class="who">
+          <b>${esc(n)}</b>
+          <span><span class="num">${logs.length}</span> موعد موثّق</span>
+        </span>
+        <span class="avatar"><span class="num">${wkN}</span> حصة خلال أسبوع</span>
+      </div>
+      ${last ? `<div class="nextline" style="border-top:1px solid var(--line-soft);padding-top:9px">
+          آخر ما أُنجز: <b>${esc(progOn(last,last.date))}</b><br>
+          <span style="font-size:11.5px">${longDate(last.date)}</span></div>` :
+        `<p class="empty" style="padding:4px 0;font-size:12.5px">لم تُسجَّل متابعة بعد لهذا الصف.</p>`}
+      ${logs.length>1 ? `<div style="margin-top:8px">${logs.slice(1).map(t=>`
+        <button class="clsrow" type="button" data-goto="${t.date}" style="width:100%;background:none;border:0;text-align:start">
+          <span class="dt">${parse(t.date).getDate()} ${MONTHS[parse(t.date).getMonth()]}</span>
+          <span class="tx">${esc(progOn(t,t.date))}</span>
+        </button>`).join("")}</div>` : ""}
+    </div>`;
+  });
+  main.innerHTML = html;
+  wireCommon();
+}
+
 /* ---------- تبويب المهام ---------- */
 function renderTasks(){
   const FILTERS = [["all","الكل"],["today","اليوم"],["upcoming","قادمة"],["late","متأخرة"],["done","منجزة"]];
@@ -1087,12 +1385,25 @@ function renderTasks(){
   else if(state.filter==="done")     list = expand(lateFrom, YEAR_END).filter(t=>t.done);
   else                               list = expand(lateFrom, YEAR_END);
   if(state.catFilter!=="all") list=list.filter(t=>t.cat===state.catFilter);
+  const q = (state.q||"").trim();
+  if(q){
+    const nq = q.toLowerCase();
+    list = list.filter(t =>
+      (t.title||"").toLowerCase().includes(nq) ||
+      (t.note||"").toLowerCase().includes(nq) ||
+      (t.cls||"").toLowerCase().includes(nq) ||
+      (progOn(t,t.date)||"").toLowerCase().includes(nq));
+  }
   list.sort((a,b)=> (a.done-b.done) || a.date.localeCompare(b.date) || (PRIOS.indexOf(a.prio)-PRIOS.indexOf(b.prio)));
 
   const groups={};
   list.forEach(t=>{ (groups[t.date] ||= []).push(t); });
 
-  let html = alertsHtml() + `<div class="chips" role="group" aria-label="تصفية حسب الحالة">
+  let html = alertsHtml() + `<div class="search">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <input type="text" id="q" placeholder="ابحث في المهام والصفوف والمتابعة…" value="${esc(state.q||"")}" autocomplete="off">
+  </div>
+  <div class="chips" role="group" aria-label="تصفية حسب الحالة">
     ${FILTERS.map(([k,l])=>`<button class="chip" type="button" data-f="${k}" aria-pressed="${state.filter===k}">${l}</button>`).join("")}
   </div>
   <div class="chips" role="group" aria-label="تصفية حسب التصنيف">
@@ -1108,13 +1419,18 @@ function renderTasks(){
       html += `<div class="card"><h3 style="display:flex;justify-content:space-between;gap:8px">
         <span>${longDate(d)}</span>
         <span style="font-size:11.5px;color:var(--ink-soft);font-weight:400">${(evByDate[d]||[]).length?`${(evByDate[d]||[]).length} حدث رسمي`:""}</span></h3>
-        ${groups[d].map(t=>taskRow(t)).join("")}</div>`;
+        ${(()=>{const ck=clashKeys(groups[d]);return groups[d].map(t=>taskRow(t,ck)).join("")})()}</div>`;
     });
   }
   const nRep = tasks.filter(isRep).length;
   html += `<p class="hint">بنود مسجَّلة: <b class="num">${tasks.length}</b>${nRep?` — منها <b class="num">${nRep}</b> متكرّرة`:""}<br>
     القائمة تعرض من ${longDate(lateFrom)} حتى نهاية العام الدراسي.</p>`;
   main.innerHTML = html;
+  const qi = document.getElementById("q");
+  if(qi){
+    qi.oninput = ()=>{ state.q = qi.value; const p0 = qi.selectionStart; render();
+      const q2 = document.getElementById("q"); if(q2){ q2.focus(); try{ q2.setSelectionRange(p0,p0); }catch(e){} } };
+  }
   main.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{ state.filter=b.dataset.f; render(); });
   main.querySelectorAll("[data-cf]").forEach(b=>b.onclick=()=>{ state.catFilter=b.dataset.cf; render(); });
   wireCommon();
@@ -1179,6 +1495,29 @@ function renderStats(){
   });
   html += `</div>`;
 
+  /* ---- الحصص المدرسية ---- */
+  const now = new Date(), sun = addDays(now, -now.getDay());
+  const wk = expand(key(sun), key(addDays(sun,6))).filter(isHissa);
+  const byCls = {};
+  wk.forEach(t=>{ const k = t.cls || "بدون صف"; byCls[k] = (byCls[k]||0)+1; });
+  const clsRows = Object.entries(byCls).sort((a,b)=>b[1]-a[1]);
+  const maxC = Math.max(1, ...clsRows.map(x=>x[1]));
+
+  html += `<div class="card"><h3>الحصص المدرسية <span style="font-size:11px;color:var(--ink-soft);font-weight:400">(هذا الأسبوع)</span></h3>`;
+  if(wk.length){
+    const sbN = wk.filter(t=>t.standby).length;
+    html += `<div class="nextline" style="border:0;padding:0 0 10px">
+      <b class="num">${wk.length-sbN}</b> حصة نصاب · منجز منها <b class="num">${wk.filter(t=>t.done&&!t.standby).length}</b>
+      ${sbN?`<br><b class="num">${sbN}</b> حصة احتياط`:""}</div>`;
+    clsRows.forEach(([k,n])=>{
+      html += `<div class="bar"><div class="l"><span>${esc(k)}</span><b class="num">${n}</b></div>
+        <div class="track"><div class="fill" style="width:${Math.round(n/maxC*100)}%;background:var(--c-hissa)"></div></div></div>`;
+    });
+  }else{
+    html += `<p class="empty" style="padding:4px 0">لم تُسجَّل حصص هذا الأسبوع.<br>أضف مهمة بتصنيف «حصة» وحدّد الصف ورقم الحصة.</p>`;
+  }
+  html += `</div>`;
+
   html += `<div class="card"><h3>القادم في التقويم</h3>`;
   if(next.length){
     next.forEach(([d,t,c])=>{
@@ -1191,7 +1530,17 @@ function renderStats(){
   }
   html += `</div>`;
 
-  html += `<div class="card"><h3>أحداث التقويم المحذوفة</h3>
+  html += `<div class="card"><h3>نسخة احتياطية</h3>
+    <p style="font-size:13px;color:var(--ink-soft);margin:0 0 12px;line-height:1.7">
+      ملف واحد يحفظ كل مهامك وأحداث التقويم المحذوفة. احتفظ به مرة كل فصل دراسي.</p>
+    <div class="rowbtns">
+      <button class="ttbtn" type="button" id="bk-out">⬇ تصدير نسخة</button>
+      <button class="ttbtn" type="button" id="bk-in">⬆ استيراد نسخة</button>
+    </div>
+    <input type="file" id="bk-file" accept="application/json,.json" hidden>
+  </div>
+
+  <div class="card"><h3>أحداث التقويم المحذوفة</h3>
     <p style="font-size:13px;color:var(--ink-soft);margin:0 0 12px;line-height:1.7">
       حذفتَ <b class="num">${killed.size}</b> من أصل <b class="num">${EVENTS.length}</b> حدثًا رسميًا.
       إعادة الضبط تُرجع كل الأحداث المحذوفة دفعة واحدة ولا تمسّ مهامك.
@@ -1201,6 +1550,51 @@ function renderStats(){
 
   main.innerHTML = html;
   wireCommon();
+
+  const bo = document.getElementById("bk-out");
+  if(bo) bo.onclick = async ()=>{
+    const payload = JSON.stringify({app:"tarbawi", v:1, at:new Date().toISOString(),
+      tasks, killed:[...killed]}, null, 2);
+    bo.textContent = "جارٍ التجهيز…";
+    await saveFile("نسخة-احتياطية-" + TODAY + ".json", payload, "application/json");
+    bo.textContent = "⬇ تصدير نسخة";
+  };
+  const bi = document.getElementById("bk-in"), bf = document.getElementById("bk-file");
+  if(bi && bf){
+    bi.onclick = ()=>bf.click();
+    bf.onchange = ()=>{
+      const f = bf.files && bf.files[0]; if(!f) return;
+      const r = new FileReader();
+      r.onload = ()=>{
+        let data;
+        try{ data = JSON.parse(r.result); }catch(e){ data = null; }
+        bf.value = "";
+        if(!data || !Array.isArray(data.tasks)){
+          askConfirm({title:"ملف غير صالح", text:"تعذّرت قراءة الملف — تأكد أنه ملف نسخة احتياطية من هذا التطبيق.", ok:"حسنًا", run:()=>{}});
+          return;
+        }
+        askConfirm({
+          title:"استيراد نسخة احتياطية",
+          text:"ستُدمج مهام الملف مع مهامك الحالية. المهمة التي لها نفس المعرّف تُستبدل بنسخة الملف.",
+          what:`${data.tasks.length} مهمة · ${(data.killed||[]).length} حدث محذوف`,
+          ok:"استيراد ودمج",
+          run: async ()=>{
+            const byId = {}; tasks.forEach(t=>byId[t.id]=t);
+            data.tasks.forEach(t=>{ if(t && t.id) byId[t.id]=t; });
+            const merged = Object.values(byId);
+            for(const t of merged) await putTask(t);
+            if(Array.isArray(data.killed)){
+              killed = new Set([...killed, ...data.killed]);
+              await pushKilled();
+            }
+            render();
+          }
+        });
+      };
+      r.readAsText(f);
+    };
+  }
+
   const rb = document.getElementById("resetev");
   if(rb && killed.size) rb.onclick = ()=>askConfirm({
     title:"إعادة ضبط أحداث التقويم",
@@ -1237,7 +1631,7 @@ document.getElementById("c-ok2").onclick=async ()=>{
 
 /* ============ نافذة المهمة ============ */
 const scrim=document.getElementById("scrim"), sheet=document.getElementById("sheet");
-let draft={cat:"tahdeer",prio:"متوسطة",rep:{t:"none",d:[],until:""}};
+let draft={cat:"tahdeer",prio:"متوسطة",period:0,standby:false,rep:{t:"none",d:[],until:""}};
 
 function optButtons(el, items, cur, cb){
   el.innerHTML = items.map(it=>`<button class="opt" type="button" data-v="${it.v}" aria-pressed="${it.v===cur}">${it.dot?`<i style="background:${it.dot}"></i>`:""}${it.l}</button>`).join("");
@@ -1247,6 +1641,22 @@ function paintOpts(){
   optButtons(document.getElementById("f-cat"),
     Object.entries(TASK_CATS).map(([k,c])=>({v:k,l:c.label,dot:c.color})), draft.cat,
     v=>{ draft.cat=v; paintOpts(); });
+
+  const hb = document.getElementById("f-hissa-box");
+  hb.hidden = draft.cat !== "hissa";
+  if(!hb.hidden){
+    const pbox = document.getElementById("f-period");
+    pbox.innerHTML = PERIODS.map((l,i)=>
+      `<button class="opt" type="button" data-p="${i+1}" aria-pressed="${draft.period===i+1}">${i+1}</button>`).join("");
+    pbox.querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>{
+      const n=+b.dataset.p; draft.period = draft.period===n ? 0 : n; paintOpts();
+    });
+    const names = [...new Set(tasks.filter(isHissa).map(t=>t.cls).filter(Boolean).concat(CLASS_SEED))];
+    document.getElementById("classlist").innerHTML = names.map(n=>`<option value="${esc(n)}"></option>`).join("");
+    const sb = document.getElementById("f-standby");
+    sb.innerHTML = `<button class="opt" type="button" id="sb-btn" aria-pressed="${draft.standby}">حصة احتياط</button>`;
+    document.getElementById("sb-btn").onclick = ()=>{ draft.standby = !draft.standby; paintOpts(); };
+  }
   optButtons(document.getElementById("f-prio"),
     PRIOS.map(p=>({v:p,l:p})), draft.prio,
     v=>{ draft.prio=v; paintOpts(); });
@@ -1282,6 +1692,8 @@ function openSheet(task, date, occDate){
   draft = {
     cat:  task ? (task.cat||"tahdeer") : "tahdeer",
     prio: task ? (task.prio||"متوسطة") : "متوسطة",
+    period: task ? (task.period||0) : 0,
+    standby: task ? !!task.standby : false,
     rep:  task && task.rep ? {t:task.rep.t||"none", d:(task.rep.d||[]).slice(), until:task.rep.until||""}
                            : {t:"none", d:[], until:""}
   };
@@ -1293,6 +1705,14 @@ function openSheet(task, date, occDate){
     : longDate(ds) + ((evByDate[ds]||[]).length? ` · ${(evByDate[ds]||[]).length} حدث رسمي في هذا اليوم` : "");
   document.getElementById("f-title").value = task? task.title : "";
   document.getElementById("f-note").value  = task? (task.note||"") : "";
+  document.getElementById("f-class").value = task? (task.cls||"") : "";
+  const pb = document.getElementById("f-prog-box");
+  const showProg = !!(task && isHissa(task) && occDate);
+  pb.hidden = !showProg;
+  if(showProg){
+    document.querySelector('label[for="f-prog"]').textContent = "ما أُنجز في " + longDate(occDate);
+    document.getElementById("f-prog").value = progOn(task, occDate);
+  }
   document.getElementById("f-date").value  = ds;
   document.getElementById("f-del").hidden  = !task;
   document.querySelector('label[for="f-date"]').textContent = repeating ? "تاريخ بداية التكرار" : "التاريخ";
@@ -1327,6 +1747,18 @@ document.getElementById("f-save").onclick = async ()=>{
     id: old? old.id : "t"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),
     date, title, note: document.getElementById("f-note").value.trim(),
     cat: draft.cat, prio: draft.prio,
+    cls:     draft.cat==="hissa" ? document.getElementById("f-class").value.trim() : "",
+    period:  draft.cat==="hissa" ? (draft.period||0) : 0,
+    standby: draft.cat==="hissa" ? !!draft.standby : false,
+    progress: (()=>{
+      const m = Object.assign({}, (old && old.progress) || {});
+      const pb2 = document.getElementById("f-prog-box");
+      if(!pb2.hidden && state.occDate){
+        const v = document.getElementById("f-prog").value.trim();
+        if(v) m[state.occDate] = v; else delete m[state.occDate];
+      }
+      return draft.cat==="hissa" ? m : {};
+    })(),
     done: (old && rep.t==="none") ? !!old.done : false,
     rep,
     doneOn: rep.t==="none" ? {} : (old && old.doneOn ? old.doneOn : {}),
