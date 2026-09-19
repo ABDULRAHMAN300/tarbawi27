@@ -98,20 +98,31 @@
   --shadow-lift:0 8px 34px rgba(0,0,0,.5);
 }
 *{box-sizing:border-box}
+html{
+  -webkit-text-size-adjust:100%;text-size-adjust:100%;
+  overscroll-behavior-y:none;
+}
 body{
   margin:0;background:var(--bg);color:var(--ink);
   font-family:var(--font-b);font-size:15px;line-height:1.6;
-  -webkit-text-size-adjust:100%;
+  -webkit-text-size-adjust:100%;text-size-adjust:100%;
+  overscroll-behavior-y:none;
+  touch-action:manipulation;              /* يمنع تكبير الصفحة عند النقر المزدوج */
+  -webkit-tap-highlight-color:transparent;
+  overflow-x:clip;
 }
+button,.tab,.opt,.chk,.mini,.navbtn{touch-action:manipulation}
 h1,h2,h3,h4,.dsp{font-family:var(--font-d);font-weight:600;text-wrap:balance;margin:0}
 button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
 .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
 
-#shell{max-width:560px;margin:0 auto;padding:0 16px 96px;min-height:100vh}
+#shell{max-width:560px;margin:0 auto;padding:0 16px 96px;min-height:100vh;min-height:100dvh}
+main{contain:layout paint}
 
 /* ---------- app bar ---------- */
 .appbar{
   position:sticky;top:0;z-index:30;background:var(--bg);
+  -webkit-backface-visibility:hidden;backface-visibility:hidden;
   padding-block:14px 10px;border-bottom:1px solid var(--line-soft);
   margin-inline:-16px;padding-inline:16px;
 }
@@ -248,7 +259,9 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
 .daycard-h .mini{border:0;background:var(--surface-2);border-radius:9px;padding:5px 10px;font-size:11.5px;font-family:var(--font-d);color:var(--violet)}
 
 /* ---------- filters ---------- */
-.chips{display:flex;gap:6px;overflow-x:auto;padding-block:2px 4px;margin-top:12px;scrollbar-width:none}
+.chips{display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;overscroll-behavior-x:contain;
+  -webkit-overflow-scrolling:touch;padding-block:2px 4px;margin-top:12px;scrollbar-width:none;
+  margin-inline:-16px;padding-inline:16px}
 .chips::-webkit-scrollbar{display:none}
 .chip{
   flex-shrink:0;border:1px solid var(--line);background:var(--surface);border-radius:999px;
@@ -280,8 +293,8 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
 /* ---------- bottom tabs ---------- */
 .tabs{
   position:fixed;inset-inline:0;bottom:0;z-index:40;
-  background:color-mix(in srgb,var(--surface) 92%,transparent);
-  backdrop-filter:blur(12px);border-top:1px solid var(--line);
+  background:var(--surface);border-top:1px solid var(--line);
+  box-shadow:0 -1px 0 var(--line-soft);
   display:flex;padding:7px 12px calc(7px + env(safe-area-inset-bottom));
 }
 .tabs-in{max-width:560px;margin:0 auto;display:flex;width:100%;gap:4px}
@@ -294,12 +307,13 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
 .tab[aria-selected="true"]{color:var(--violet);background:var(--surface-2)}
 
 /* ---------- sheet ---------- */
-.scrim{position:fixed;inset:0;z-index:50;background:rgba(30,22,42,.45);backdrop-filter:blur(2px);display:grid;align-items:end;justify-items:center}
+.scrim{position:fixed;inset:0;z-index:50;background:rgba(30,22,42,.52);display:grid;align-items:end;justify-items:center}
 .scrim[hidden]{display:none!important}
 .sheet{
   width:100%;max-width:560px;background:var(--surface);border-radius:20px 20px 0 0;
   box-shadow:var(--shadow-lift);padding:8px 16px calc(20px + env(safe-area-inset-bottom));
-  max-height:92vh;overflow-y:auto;animation:up .22s ease;
+  max-height:92vh;max-height:92dvh;overflow-y:auto;animation:up .22s ease;
+  -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
 }
 @keyframes up{from{transform:translateY(24px);opacity:.4}to{transform:none;opacity:1}}
 @media (prefers-reduced-motion:reduce){.sheet{animation:none}.fill{transition:none}}
@@ -310,7 +324,7 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
 .field label{display:block;font-size:12px;font-family:var(--font-d);color:var(--ink-soft);margin-bottom:6px}
 .field input,.field textarea{
   width:100%;border:1px solid var(--line);background:var(--bg);color:var(--ink);
-  border-radius:11px;padding:11px 12px;font-family:var(--font-b);font-size:14.5px;
+  border-radius:11px;padding:11px 12px;font-family:var(--font-b);font-size:16px;
 }
 .field textarea{resize:vertical;min-height:64px}
 .field input:focus-visible,.field textarea:focus-visible,button:focus-visible,.chk:focus-visible{outline:2px solid var(--violet);outline-offset:2px}
@@ -396,7 +410,7 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
 /* ---------- البحث ---------- */
 .search{position:relative;margin-top:12px}
 .search input{width:100%;border:1px solid var(--line);background:var(--surface);color:var(--ink);
-  border-radius:12px;padding:11px 38px 11px 12px;font-family:var(--font-b);font-size:14px}
+  border-radius:12px;padding:11px 38px 11px 12px;font-family:var(--font-b);font-size:16px}
 .search svg{position:absolute;inset-inline-start:auto;right:12px;top:50%;transform:translateY(-50%);
   width:16px;height:16px;stroke:var(--ink-soft);fill:none;stroke-width:2}
 .rowbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
@@ -957,8 +971,15 @@ function lateList(){
 /* ============ الرسم ============ */
 const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const main = document.getElementById("main");
+let _qTimer = null;
 
+let _noScrollKeep = false;
 function render(){
+  /* تثبيت الصفحة: نحجز ارتفاع المحتوى ونعيد موضع التمرير بعد إعادة البناء
+     حتى لا "تقفز" الواجهة على الجوال عند كل ضغطة. */
+  const _y = window.scrollY || window.pageYOffset || 0;
+  const _h = main.offsetHeight;
+  if(_h) main.style.minHeight = _h + "px";
   document.getElementById("todayline").textContent = "اليوم: " + longDate(TODAY);
   document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected", b.dataset.tab===state.tab));
   if(state.tab==="cal") renderCal();
@@ -966,6 +987,9 @@ function render(){
   else if(state.tab==="classes") renderClasses();
   else renderStats();
   paintBadges();
+  if(_noScrollKeep){ _noScrollKeep = false; }
+  else if((window.scrollY||0) !== _y){ window.scrollTo(0, _y); }
+  requestAnimationFrame(()=>{ main.style.minHeight = ""; });
 }
 
 function monthNav(){
@@ -1155,7 +1179,7 @@ function wireCommon(){
     const g = b.dataset.goto;
     if(g.startsWith("f:")){ state.tab="tasks"; state.filter=g.slice(2); state.catFilter="all"; }
     else { state.tab="cal"; state.mode="month"; state.sel=g; const d=parse(g); state.cur={y:d.getFullYear(),m:d.getMonth()}; }
-    render(); window.scrollTo(0,0);
+    _noScrollKeep = true; render(); window.scrollTo(0,0);
   });
 }
 
@@ -1430,8 +1454,16 @@ function renderTasks(){
   main.innerHTML = html;
   const qi = document.getElementById("q");
   if(qi){
-    qi.oninput = ()=>{ state.q = qi.value; const p0 = qi.selectionStart; render();
-      const q2 = document.getElementById("q"); if(q2){ q2.focus(); try{ q2.setSelectionRange(p0,p0); }catch(e){} } };
+    qi.oninput = ()=>{
+      state.q = qi.value;
+      clearTimeout(_qTimer);
+      _qTimer = setTimeout(()=>{
+        const p0 = qi.selectionStart, act = document.activeElement === qi;
+        render();
+        const q2 = document.getElementById("q");
+        if(q2 && act){ q2.focus({preventScroll:true}); try{ q2.setSelectionRange(p0,p0); }catch(e){} }
+      }, 220);
+    };
   }
   main.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{ state.filter=b.dataset.f; render(); });
   main.querySelectorAll("[data-cf]").forEach(b=>b.onclick=()=>{ state.catFilter=b.dataset.cf; render(); });
@@ -1802,7 +1834,7 @@ document.getElementById("f-del").onclick = ()=>{
 };
 
 /* ============ التبويبات والوضع الليلي ============ */
-document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{ state.tab=b.dataset.tab; render(); });
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{ state.tab=b.dataset.tab; _noScrollKeep=true; render(); window.scrollTo(0,0); });
 document.getElementById("themebtn").onclick = ()=>{
   const cur = document.documentElement.getAttribute("data-theme");
   const dark = cur ? cur==="dark" : matchMedia("(prefers-color-scheme: dark)").matches;
