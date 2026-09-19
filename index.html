@@ -37,7 +37,7 @@
   --c-tasjeel:#EA7317;
   --c-otla:#0F9D58;
   --c-munasaba:#D6217E;
-  --c-hissa:#1E3A8A;
+  --c-hissa:#C2410C;
   --on-hissa:#FFFFFF;
   --on-violet:#FFFFFF;
   --grad:linear-gradient(135deg,#7B2FF7 0%,#B32FE0 55%,#FF4D9D 100%);
@@ -65,8 +65,8 @@
     --c-tasjeel:#FFA24D;
     --c-otla:#3EDC8A;
     --c-munasaba:#EE6FE0;
-    --c-hissa:#7FA6FF;
-    --on-hissa:#0E1A33;
+    --c-hissa:#FFA24D;
+    --on-hissa:#2A1503;
     --on-violet:#180F2B;
     --grad:linear-gradient(135deg,#B98BFF 0%,#D97BF0 55%,#FF7DBB 100%);
     --shadow:0 1px 2px rgba(0,0,0,.34), 0 8px 24px rgba(0,0,0,.3);
@@ -90,8 +90,8 @@
   --c-tasjeel:#FFA24D;
   --c-otla:#3EDC8A;
   --c-munasaba:#EE6FE0;
-  --c-hissa:#7FA6FF;
-  --on-hissa:#0E1A33;
+  --c-hissa:#FFA24D;
+  --on-hissa:#2A1503;
   --on-violet:#180F2B;
   --grad:linear-gradient(135deg,#B98BFF 0%,#D97BF0 55%,#FF7DBB 100%);
   --shadow:0 1px 2px rgba(0,0,0,.34), 0 8px 24px rgba(0,0,0,.3);
@@ -175,8 +175,10 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
 .cell.sel .d{color:var(--on-violet)}
 .cell.holiday .d{color:var(--c-otla)}
 .cell.sel.holiday .d{color:var(--on-violet)}
-.dots{display:flex;gap:2.5px;height:5px;align-items:center}
+.dots{display:flex;gap:2.5px;height:8px;align-items:center}
 .dots i{width:4.5px;height:4.5px;border-radius:50%;display:block}
+.dots i.mine{width:8px;height:8px;border-radius:1.5px;background:var(--grad);transform:rotate(45deg);margin-inline:1px}
+.cell.sel .dots i.mine{background:var(--on-violet)!important;opacity:.9}
 .cell.sel .dots i{background:var(--on-violet)!important;opacity:.85}
 .cell .flag{position:absolute;inset-block-start:3px;inset-inline-end:4px;width:5px;height:5px;border-radius:50%;background:var(--rose)}
 
@@ -550,9 +552,8 @@ const CATS = {
   dawam:   {label:"الدوام",         color:"var(--c-dawam)"},
   imtihan: {label:"الامتحانات",     color:"var(--c-imtihan)"},
   nataij:  {label:"النتائج",        color:"var(--c-nataij)"},
-  tasjeel: {label:"التسجيل والنقل", color:"var(--c-tasjeel)"},
   otla:    {label:"العطل",          color:"var(--c-otla)"},
-  munasaba:{label:"المناسبات",      color:"var(--c-munasaba)"}
+  munasaba:{label:"الأنشطة",        color:"var(--c-munasaba)"}
 };
 
 const EVENTS = [
@@ -659,7 +660,7 @@ const TASK_CATS = {
   hissa:  {label:"حصة",     color:"var(--c-hissa)"},
   tahdeer:{label:"تحضير",   color:"var(--c-dawam)"},
   taqweem:{label:"تقييم",   color:"var(--c-imtihan)"},
-  idari:  {label:"إداري",   color:"var(--c-tasjeel)"},
+  idari:  {label:"إداري",   color:"var(--c-nataij)"},
   ijtimaa:{label:"اجتماع",  color:"var(--c-munasaba)"},
   shakhsi:{label:"شخصي",    color:"var(--c-otla)"}
 };
@@ -689,7 +690,8 @@ const TODAY = key(new Date());
 
 /* الأحداث المحذوفة نهائيًا (معرّفاتها) */
 let killed = new Set();
-const liveEvents = () => EVENTS.filter(e=>!killed.has(e[3]));
+const DROPPED_CATS = new Set(["tasjeel"]);
+const liveEvents = () => EVENTS.filter(e=>!killed.has(e[3]) && !DROPPED_CATS.has(e[2]));
 
 let evByDate = {}, HOLIDAY_DATES = new Set();
 function rebuildEvents(){
@@ -984,7 +986,7 @@ function monthNav(){
 function dotColors(ds){
   const cs=[];
   (evByDate[ds]||[]).forEach(e=>{ const c=CATS[e.c].color; if(!cs.includes(c)) cs.push(c); });
-  if(tasksOn(ds).some(t=>!t.done)) cs.unshift("var(--rose)");
+  if(tasksOn(ds).some(t=>!t.done)) cs.unshift("__mine__");
   return cs.slice(0,4);
 }
 
@@ -1008,7 +1010,7 @@ function renderCal(){
       const dots = dotColors(ds);
       html += `<button type="button" class="${cls.join(" ")}" data-date="${ds}" aria-label="${longDate(ds)}">
         <span class="d num">${d}</span>
-        <span class="dots">${dots.map(c=>`<i style="background:${c}"></i>`).join("")}</span>
+        <span class="dots">${dots.map(c=>c==="__mine__"?`<i class="mine"></i>`:`<i style="background:${c}"></i>`).join("")}</span>
       </button>`;
     }
     html += `</div>`;
@@ -1098,7 +1100,7 @@ function dayPanel(ds){
 }
 
 function legend(){
-  return `<div class="legend">${Object.values(CATS).map(c=>`<span><i style="background:${c.color}"></i>${c.label}</span>`).join("")}<span><i style="background:var(--rose)"></i>مهامي</span></div>
+  return `<div class="legend">${Object.values(CATS).map(c=>`<span><i style="background:${c.color}"></i>${c.label}</span>`).join("")}<span><i style="background:var(--grad);border-radius:2.5px;width:9px;height:9px;transform:rotate(45deg)"></i>&nbsp;مهامي</span></div>
   <p class="hint">المصدر: الخطة الفصلية للعام الدراسي ٢٠٢٦–٢٠٢٧ م (التعليم العام) — وزارة التربية، دولة الكويت.</p>`;
 }
 
