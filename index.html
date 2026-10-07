@@ -544,11 +544,27 @@ main{contain:layout paint}
         <button class="btn primary" id="a-in" type="button">دخول</button>
         <button class="btn ghost" id="a-up" type="button">حساب جديد</button>
       </div>
+      <button id="a-forgot" type="button" style="display:block;margin:12px auto 0;border:0;background:none;
+        font-family:var(--font-d);font-size:12.5px;color:var(--violet);text-decoration:underline">نسيت كلمة المرور؟</button>
     </div>
     <div id="auth-out" hidden>
       <p style="font-size:13px;color:var(--ink-soft);line-height:1.7;margin:0 0 6px">مسجَّل الدخول باسم:</p>
       <div class="what" id="auth-email"></div>
-      <div class="sheet-actions"><button class="btn ghost" id="a-out" type="button">تسجيل الخروج</button></div>
+      <div class="sheet-actions">
+        <button class="btn primary" id="a-chpass" type="button">تغيير كلمة المرور</button>
+        <button class="btn ghost" id="a-out" type="button">تسجيل الخروج</button>
+      </div>
+    </div>
+    <div id="auth-new" hidden>
+      <p style="font-size:13px;color:var(--ink-soft);line-height:1.7;margin:0 0 12px" id="auth-new-sub">
+        اكتب كلمة المرور الجديدة.
+      </p>
+      <div class="field"><label for="a-newpass">كلمة المرور الجديدة</label>
+        <input type="password" id="a-newpass" autocomplete="new-password" placeholder="٦ أحرف فأكثر"></div>
+      <div class="sheet-actions" style="margin-top:6px">
+        <button class="btn primary" id="a-save-pass" type="button">حفظ</button>
+        <button class="btn ghost" id="a-cancel-pass" type="button">إلغاء</button>
+      </div>
     </div>
     <p id="auth-msg" hidden style="font-size:12.5px;color:var(--c-imtihan);margin:12px 0 0;line-height:1.7"></p>
     <div class="sheet-actions" style="margin-top:10px">
@@ -832,10 +848,19 @@ async function pushKilled(){
 
 /* ---------- الحساب ---------- */
 const ascrim = document.getElementById("ascrim");
+let authView = "auto";   /* auto | new */
 function paintAuth(){
-  const inBox = document.getElementById("auth-in"), outBox = document.getElementById("auth-out");
-  if(USER){ inBox.hidden=true; outBox.hidden=false; document.getElementById("auth-email").textContent=USER.email||""; }
-  else { inBox.hidden=false; outBox.hidden=true; }
+  const inBox  = document.getElementById("auth-in"),
+        outBox = document.getElementById("auth-out"),
+        newBox = document.getElementById("auth-new");
+  if(authView === "new"){
+    inBox.hidden = true; outBox.hidden = true; newBox.hidden = false;
+  }else if(USER){
+    inBox.hidden = true; outBox.hidden = false; newBox.hidden = true;
+    document.getElementById("auth-email").textContent = USER.email || "";
+  }else{
+    inBox.hidden = false; outBox.hidden = true; newBox.hidden = true;
+  }
   paintSync();
 }
 function openAuth(){
@@ -845,7 +870,7 @@ function openAuth(){
   }
   ascrim.hidden=false;
 }
-function closeAuth(){ ascrim.hidden=true; }
+function closeAuth(){ ascrim.hidden=true; authView="auto"; const m=document.getElementById("auth-msg"); if(m) m.hidden=true; }
 document.getElementById("sync").onclick = openAuth;
 document.getElementById("a-close").onclick = closeAuth;
 ascrim.onclick = e=>{ if(e.target===ascrim) closeAuth(); };
@@ -868,6 +893,47 @@ async function doAuth(mode){
     msg.textContent="تم."; closeAuth();
   }catch(e){ msg.textContent="تعذّر: "+(e.message||"خطأ غير معروف"); }
 }
+/* إرسال رابط استعادة إلى البريد */
+document.getElementById("a-forgot").onclick = async ()=>{
+  const msg = document.getElementById("auth-msg");
+  const email = document.getElementById("a-email").value.trim();
+  msg.hidden = false;
+  if(!SB){ msg.textContent="لم تُضبط بيانات Supabase في ملف config.js."; return; }
+  if(!email){ msg.textContent="اكتب بريدك في الحقل أعلاه أولًا، ثم اضغط «نسيت كلمة المرور؟»."; return; }
+  msg.textContent = "جارٍ الإرسال…";
+  try{
+    const back = location.origin + location.pathname;
+    const r = await SB.auth.resetPasswordForEmail(email, {redirectTo: back});
+    if(r.error) throw r.error;
+    msg.textContent = "أُرسل رابط الاستعادة إلى " + email + ". افتح الرابط من نفس الجهاز، وستُفتح شاشة كلمة المرور الجديدة.";
+  }catch(e){ msg.textContent = "تعذّر الإرسال: " + (e.message||"خطأ غير معروف"); }
+};
+
+/* تغيير كلمة المرور وأنت مسجَّل الدخول */
+document.getElementById("a-chpass").onclick = ()=>{
+  document.getElementById("auth-new-sub").textContent = "اكتب كلمة المرور الجديدة لحساب " + ((USER&&USER.email)||"") + ".";
+  document.getElementById("auth-msg").hidden = true;
+  authView = "new"; paintAuth();
+  setTimeout(()=>document.getElementById("a-newpass").focus(), 60);
+};
+document.getElementById("a-cancel-pass").onclick = ()=>{ authView="auto"; paintAuth(); };
+
+document.getElementById("a-save-pass").onclick = async ()=>{
+  const msg = document.getElementById("auth-msg");
+  const np  = document.getElementById("a-newpass").value;
+  msg.hidden = false;
+  if(!SB){ msg.textContent="لم تُضبط بيانات Supabase."; return; }
+  if(np.length < 6){ msg.textContent="كلمة المرور ٦ أحرف فأكثر."; return; }
+  msg.textContent = "جارٍ الحفظ…";
+  try{
+    const r = await SB.auth.updateUser({password: np});
+    if(r.error) throw r.error;
+    document.getElementById("a-newpass").value = "";
+    authView = "auto"; paintAuth();
+    msg.hidden = false; msg.textContent = "تم تغيير كلمة المرور.";
+  }catch(e){ msg.textContent = "تعذّر: " + (e.message||"خطأ غير معروف"); }
+};
+
 document.getElementById("a-in").onclick  = ()=>doAuth("in");
 document.getElementById("a-up").onclick  = ()=>doAuth("up");
 document.getElementById("a-out").onclick = async ()=>{ try{ await SB.auth.signOut(); }catch(e){} closeAuth(); };
@@ -885,7 +951,16 @@ async function initStore(){
     SB = window.supabase.createClient(cfg.url.trim(), cfg.anonKey.trim(), {auth:{persistSession:true,autoRefreshToken:true}});
     const {data} = await SB.auth.getSession();
     USER = (data && data.session) ? data.session.user : null;
-    SB.auth.onAuthStateChange((_e,s)=>{ USER = s? s.user : null; paintAuth(); if(USER) sync(); });
+    SB.auth.onAuthStateChange((ev,s)=>{
+      USER = s ? s.user : null;
+      if(ev === "PASSWORD_RECOVERY"){
+        authView = "new";
+        document.getElementById("auth-new-sub").textContent = "رابط الاستعادة صحيح. اكتب كلمة المرور الجديدة.";
+        ascrim.hidden = false;
+        try{ history.replaceState(null,"",location.origin+location.pathname); }catch(e){}
+      }
+      paintAuth(); if(USER) sync();
+    });
   }catch(e){ SB=null; }
   paintAuth();
   if(USER) sync();
