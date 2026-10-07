@@ -1,11 +1,11 @@
 /* ============================================================
    Service Worker — مهام التقويم التربوي
-   النسخة 5: تبحث عن تحديث عند كل فتح، وتعمل أوفلاين كما هي.
+   النسخة 10: تبحث عن تحديث عند كل فتح، وتعمل أوفلاين كما هي.
 
    عند رفع تحديث مستقبلًا: غيّر الرقم في السطر التالي فقط
-   (tarbawi-v5 ← tarbawi-v6) ليأخذ الجوال النسخة الجديدة فورًا.
+   (tarbawi-v10 ← tarbawi-v10) ليأخذ الجوال النسخة الجديدة فورًا.
    ============================================================ */
-const CACHE = "tarbawi-v9";
+const CACHE = "tarbawi-v10";
 
 /* ملفات لا تتغيّر كثيرًا — تُخزَّن مسبقًا */
 const SHELL = [
@@ -38,10 +38,12 @@ self.addEventListener("activate", e => {
   );
 });
 
+/* يسمح للصفحة بطلب تفعيل نسخة جديدة فورًا */
 self.addEventListener("message", e => {
   if (e.data === "skipWaiting") self.skipWaiting();
 });
 
+/* الشبكة أولًا مع مهلة، ثم النسخة المخزّنة */
 function networkFirst(req) {
   return new Promise(resolve => {
     let settled = false;
@@ -62,14 +64,14 @@ function networkFirst(req) {
       })
       .catch(() => {
         clearTimeout(timer);
-        caches.match(req).then(hit => {
-          if (hit) done(hit);
-          else caches.match("./index.html").then(fb => done(fb));
-        });
+        caches.match(req)
+          .then(hit => done(hit || caches.match("./index.html")))
+          .then(hit => done(hit));
       });
   });
 }
 
+/* من المخزّن فورًا، مع تحديث صامت في الخلفية */
 function staleWhileRevalidate(req) {
   return caches.match(req).then(hit => {
     const net = fetch(req).then(res => {
@@ -88,6 +90,8 @@ self.addEventListener("fetch", e => {
   if (req.method !== "GET") return;
 
   const url = new URL(req.url);
+
+  /* لا تمسّ نداءات Supabase أو أي نطاق خارجي إطلاقًا */
   if (url.origin !== self.location.origin) return;
 
   const p = url.pathname;
@@ -95,10 +99,12 @@ self.addEventListener("fetch", e => {
   const isConfig = p.endsWith("/config.js");
   const isLib    = p.endsWith("/supabase.min.js");
 
+  /* الصفحة والإعدادات والمكتبة: ابحث عن الأحدث دائمًا */
   if (isPage || isConfig || isLib) {
     e.respondWith(networkFirst(req));
     return;
   }
 
+  /* الأيقونات وبقية الملفات: فورية من المخزّن مع تحديث خلفي */
   e.respondWith(staleWhileRevalidate(req));
 });
