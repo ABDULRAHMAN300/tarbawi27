@@ -1031,7 +1031,7 @@ const ord = t => isHissa(t) && t.period ? t.period : 99;
 const isNisab = t => isHissa(t) && !t.standby;
 function tasksOn(ds){
   return tasks.filter(t=>hits(t,ds)).map(t=>occOf(t,ds))
-    .sort((a,b)=>(a.done-b.done)||(ord(a)-ord(b))
+    .sort((a,b)=>(isHissa(b)-isHissa(a))||(a.done-b.done)||(ord(a)-ord(b))
                ||(PRIOS.indexOf(a.prio)-PRIOS.indexOf(b.prio))||((a.ts||0)-(b.ts||0)));
 }
 /* حصتان في نفس اليوم بنفس الرقم */
@@ -1152,9 +1152,9 @@ function renderCal(){
           <span class="dw">${DAYS[d.getDay()]} · ${MONTHS[d.getMonth()]}</span>
           <button class="mini" type="button" data-add="${ds}">+ مهمة</button>
         </div>
-        ${evs.length?`<div style="margin-top:6px">${evs.map(e=>evRow(e,{del:true})).join("")}</div>`:""}
+        ${tks.length?`<div style="margin-top:6px">${(()=>{const ck=clashKeys(tks);return tks.map(t=>taskRow(t,ck)).join("")})()}</div>`:""}
+        ${evs.length?`<div style="margin-top:4px">${evs.map(e=>evRow(e,{del:true})).join("")}</div>`:""}
         ${planOn(ds).length?`<div style="margin-top:4px"><div class="grp-t">الخطة الفصلية</div>${planOn(ds).map(p=>planRow(ds,p)).join("")}</div>`:""}
-        ${tks.length?`<div style="margin-top:4px">${(()=>{const ck=clashKeys(tks);return tks.map(t=>taskRow(t,ck)).join("")})()}</div>`:""}
         ${(!evs.length&&!tks.length&&!planOn(ds).length)?`<p style="font-size:12.5px;color:var(--ink-soft);margin:4px 0 0">لا يوجد شيء مسجَّل.</p>`:""}
       </div>`;
     }
@@ -1209,13 +1209,13 @@ function dayPanel(ds){
     </div>
     <div class="panel-body">
       <div>
-        <div class="grp-t">من التقويم التربوي</div>
-        ${evs.length?evs.map(e=>evRow(e,{del:true})).join(""):`<p class="empty" style="padding:8px 0;text-align:right">لا توجد أحداث رسمية في هذا اليوم.</p>`}
+        <div class="grp-t">مهامي (${tks.length})</div>
+        ${tks.length?(()=>{const ck=clashKeys(tks);return tks.map(t=>taskRow(t,ck)).join("")})():`<p class="empty" style="padding:8px 0;text-align:right">لم تُضِف مهامًّا بعد — اضغط «+ مهمة».</p>`}
       </div>
       ${planGroup(ds)}
       <div>
-        <div class="grp-t">مهامي (${tks.length})</div>
-        ${tks.length?(()=>{const ck=clashKeys(tks);return tks.map(t=>taskRow(t,ck)).join("")})():`<p class="empty" style="padding:8px 0;text-align:right">لم تُضِف مهامًّا بعد — اضغط «+ مهمة».</p>`}
+        <div class="grp-t">من التقويم التربوي</div>
+        ${evs.length?evs.map(e=>evRow(e,{del:true})).join(""):`<p class="empty" style="padding:8px 0;text-align:right">لا توجد أحداث رسمية في هذا اليوم.</p>`}
       </div>
     </div>
   </section>`;
