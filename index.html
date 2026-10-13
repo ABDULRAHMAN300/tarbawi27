@@ -1585,9 +1585,9 @@ function renderTasks(){
 /* ---------- تبويب الإحصائيات ---------- */
 function renderStats(){
   const winFrom = key(addDays(new Date(),-30)), winTo = key(addDays(new Date(),30));
-  const win = expand(winFrom, winTo).filter(t=>t.date>=winFrom && t.date<=winTo);
+  const win = expand(winFrom, winTo).filter(t=>t.date>=winFrom && t.date<=winTo && !isHissa(t));
   const total=win.length, done=win.filter(t=>t.done).length;
-  const late=lateList().length;
+  const late=lateList().filter(t=>!isHissa(t)).length;
   const soon=win.filter(t=>!t.done&&t.date>=TODAY&&t.date<=key(addDays(new Date(),7))).length;
   const pct = total? Math.round(done/total*100) : 0;
   const R=34, C=2*Math.PI*R;
@@ -1620,7 +1620,7 @@ function renderStats(){
       <circle cx="42" cy="42" r="${R}" fill="none" stroke="url(#rg)" stroke-width="9" stroke-linecap="round"
         stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct/100)}" transform="rotate(-90 42 42)"/>
     </svg>
-    <div><div class="rt num">${pct}%</div><div class="rs">الإنجاز خلال ٣٠ يومًا حولك<br>${done} منجزة من ${total} مهمة</div></div>
+    <div><div class="rt num">${pct}%</div><div class="rs">إنجاز مهامي خلال ٣٠ يومًا حولك (بدون الحصص)<br>${done} منجزة من ${total} مهمة</div></div>
   </div></div>`;
 
   html += `<div class="card"><h3>مهامي حسب التصنيف <span style="font-size:11px;color:var(--ink-soft);font-weight:400">(٣٠ يومًا حولك)</span></h3>`;
